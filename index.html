@@ -1,0 +1,1093 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ZEROBLACK ZEROTYPE</title>
+  <link rel="icon" href="data:,">
+  <style>
+    :root {
+      --bg: #f7f5f0;
+      --text: #111111;
+      --subtext: #666666;
+      --line: #d8d4cc;
+      --soft-line: #ebe7df;
+      --black: #111111;
+      --white: #ffffff;
+      --muted: #a39d91;
+      --focus: #c9beb0;
+      --danger: #8b2c2c;
+      --max: 1120px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Pretendard, "Noto Sans KR", "Apple SD Gothic Neo", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+
+    .app {
+      min-height: 100vh;
+      background:
+        linear-gradient(90deg, rgba(17,17,17,0.035) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(17,17,17,0.025) 1px, transparent 1px);
+      background-size: 72px 72px;
+    }
+
+    .screen { display: none; min-height: 100vh; opacity: 0; transform: translateY(8px); }
+    .screen:not(.is-active) { display: none !important; }
+    .screen.is-active { display: block; animation: fadeUp 520ms ease forwards; }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .wrap { width: min(100% - 40px, var(--max)); margin: 0 auto; }
+
+    /* INTRO */
+    .intro { display: flex; align-items: center; min-height: 100vh; padding: 44px 0; }
+    .intro-inner { width: 100%; display: grid; gap: clamp(54px, 9vw, 108px); }
+    .brand-mark { font-size: 13px; font-weight: 800; letter-spacing: 0.18em; }
+    .intro-copy { max-width: 840px; }
+    h1, h2, h3, p { margin: 0; }
+    .intro-title { font-size: clamp(48px, 10vw, 118px); line-height: 0.96; font-weight: 900; word-break: keep-all; }
+    .intro-sub { max-width: 650px; margin-top: 28px; color: var(--subtext); font-size: clamp(17px, 2vw, 22px); line-height: 1.75; word-break: keep-all; }
+    .intro-actions { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+
+    .primary-btn, .secondary-btn {
+      min-height: 52px; border: 1px solid var(--black); border-radius: 0;
+      padding: 0 22px; display: inline-flex; align-items: center; justify-content: center;
+      gap: 10px; transition: transform 180ms ease, background 180ms ease, color 180ms ease;
+    }
+    .primary-btn { background: var(--black); color: var(--white); font-weight: 760; }
+    .secondary-btn { background: transparent; color: var(--black); font-weight: 680; }
+    .primary-btn:hover, .secondary-btn:hover { transform: translateY(-2px); }
+    .secondary-btn:hover { background: var(--black); color: var(--white); }
+    .note { color: var(--subtext); font-size: 14px; }
+
+    /* QUESTION */
+    .question-screen { min-height: 100vh; padding: clamp(22px, 4vh, 38px) 0 34px; }
+    .question-shell { display: grid; grid-template-rows: auto auto auto; gap: clamp(22px, 4vh, 42px); }
+    .question-top { display: grid; gap: 16px; }
+    .question-meta { display: flex; align-items: center; justify-content: space-between; gap: 18px; color: var(--subtext); font-size: 13px; font-weight: 760; letter-spacing: 0.08em; }
+    .progress-track { height: 2px; background: var(--line); overflow: hidden; }
+    .progress-bar { height: 100%; width: 0%; background: var(--black); transition: width 260ms ease; }
+    .question-card { display: grid; gap: clamp(24px, 4vh, 42px); padding: clamp(18px, 5vh, 58px) 0 8px; animation: questionIn 260ms ease both; }
+    .question-card.is-changing { opacity: 0; transform: translateY(10px); }
+    @keyframes questionIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .question-number { color: var(--muted); font-size: 13px; font-weight: 800; letter-spacing: 0.12em; }
+    .question-title { max-width: 880px; margin-top: 14px; font-size: clamp(28px, 5vw, 58px); line-height: 1.16; font-weight: 860; word-break: keep-all; }
+    .choice-area { display: grid; gap: 24px; }
+    .anchors { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .anchor-vs { display: none; color: #999; font-size: 12px; font-weight: 700; letter-spacing: 0.18em; text-align: center; }
+    .anchor { min-height: clamp(74px, 12vh, 116px); border-top: 1px solid var(--black); padding-top: 16px; color: var(--text); font-size: clamp(16px, 2vw, 23px); font-weight: 720; line-height: 1.45; word-break: keep-all; }
+    .anchor.right { text-align: right; }
+    .dots { display: grid; grid-template-columns: repeat(5, minmax(44px, 1fr)); align-items: center; gap: clamp(8px, 2vw, 24px); }
+    .dot-btn { height: 56px; border: 0; background: transparent; display: grid; place-items: center; padding: 0; }
+    .dot-btn::before { content: ""; width: 22px; height: 22px; border: 1.5px solid var(--black); border-radius: 999px; background: transparent; transition: transform 160ms ease, background 160ms ease; }
+    .dot-btn:hover::before, .dot-btn:focus-visible::before { transform: scale(1.18); }
+    .dot-btn.is-selected::before { background: var(--black); transform: scale(1.22); }
+    .scale-labels { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; color: var(--subtext); font-size: 14px; font-weight: 760; line-height: 1.3; word-break: keep-all; }
+    .scale-labels span:first-child { text-align: left; }
+    .scale-labels span:nth-child(2) { text-align: center; }
+    .scale-labels span:last-child { text-align: right; }
+    .choice-feedback { min-height: 24px; margin-top: 4px; color: var(--text); font-size: 15px; font-weight: 760; line-height: 1.45; opacity: 0; transform: translateY(4px); transition: opacity 180ms ease, transform 180ms ease; }
+    .choice-feedback.is-visible { opacity: 1; transform: translateY(0); }
+    .question-bottom { display: flex; justify-content: space-between; gap: 16px; padding-top: 8px; }
+    .back-btn { min-height: 44px; border: 0; background: transparent; color: var(--text); padding: 0; font-weight: 760; text-decoration: underline; text-underline-offset: 5px; }
+    .back-btn:disabled { color: var(--muted); cursor: not-allowed; text-decoration: none; }
+
+    /* PART TRANSITION */
+    .part-transition { display: none; min-height: 100vh; place-items: center; padding: 36px 0; text-align: center; }
+    .part-transition.is-active { display: grid; animation: fadeUp 420ms ease forwards; }
+    .part-kicker { color: var(--subtext); font-size: 13px; font-weight: 860; letter-spacing: 0.16em; }
+    .part-title { margin-top: 16px; font-size: clamp(42px, 8vw, 96px); line-height: 1; font-weight: 900; }
+    .part-desc { margin: 22px auto 0; max-width: 520px; color: var(--subtext); font-size: 18px; line-height: 1.75; word-break: keep-all; }
+
+    /* ANALYSIS */
+    .analysis { display: none; min-height: 100vh; background: var(--bg); color: var(--text); align-items: center; justify-content: center; padding: 48px 24px; }
+    .analysis.is-active { display: flex; animation: fadeUp 420ms ease forwards; }
+    .analysis-inner { width: min(720px, 100%); }
+    .analysis-kicker { margin: 0 0 28px; color: #777; font-size: 13px; font-weight: 800; letter-spacing: 0.22em; }
+    .analysis-title { margin: 0 0 28px; font-size: clamp(42px, 8vw, 96px); line-height: 0.95; font-weight: 900; word-break: keep-all; }
+    .analysis-step { min-height: 32px; margin: 0 0 34px; color: #555; font-size: clamp(18px, 2.4vw, 26px); font-weight: 700; line-height: 1.5; word-break: keep-all; }
+    .analysis-bar { width: 100%; height: 3px; background: var(--line); overflow: hidden; }
+    .analysis-bar-fill { width: 0%; height: 100%; background: var(--black); transition: width 120ms linear; }
+    .analysis-note { margin: 24px 0 0; color: #777; font-size: 14px; line-height: 1.7; word-break: keep-all; }
+
+    /* RESULTS */
+    .results { background: var(--bg); }
+    .result-section { min-height: 100vh; padding: clamp(56px, 8vw, 96px) 0; display: flex; align-items: center; border-bottom: 1px solid var(--line); }
+    .eyebrow { color: var(--subtext); font-size: 13px; font-weight: 860; letter-spacing: 0.14em; }
+    .result-name { margin-top: 20px; font-size: clamp(54px, 12vw, 144px); line-height: 0.92; font-weight: 930; word-break: keep-all; }
+    .result-subtitle { margin-top: 18px; color: var(--subtext); font-size: clamp(20px, 3vw, 32px); font-weight: 620; word-break: keep-all; }
+    .insight-grid { margin-top: clamp(42px, 6vw, 70px); display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .insight-card { min-height: 0; border: 1px solid var(--line); background: rgba(255,255,255,0.36); padding: clamp(22px, 3vw, 30px); display: grid; align-content: start; gap: 18px; }
+    .insight-card h3, .axis-item h3 { font-size: 12px; font-weight: 900; letter-spacing: 0.16em; }
+    .insight-card p { color: var(--text); font-size: 17px; line-height: 1.75; word-break: keep-all; }
+    .scroll-note { margin-top: 34px; color: var(--subtext); font-size: 14px; }
+    .section-title { margin-top: 16px; max-width: 760px; font-size: clamp(38px, 7vw, 82px); line-height: 1.04; font-weight: 900; word-break: keep-all; }
+
+    /* AXIS */
+    .axis-list { margin-top: clamp(38px, 6vw, 64px); display: grid; gap: 34px; }
+    .axis-item { display: grid; grid-template-columns: minmax(170px, 240px) 1fr; gap: clamp(20px, 5vw, 70px); align-items: start; border-top: 1px solid var(--black); padding-top: 22px; }
+    .axis-copy { display: grid; gap: 20px; }
+    .axis-copy p { max-width: 760px; color: var(--text); font-size: clamp(17px, 2vw, 24px); line-height: 1.65; word-break: keep-all; }
+    .axis-bar { display: grid; gap: 10px; }
+    .axis-track { position: relative; height: 32px; }
+    .axis-track::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--black); }
+    .axis-dot { position: absolute; top: 50%; left: 50%; width: 18px; height: 18px; border-radius: 999px; background: var(--black); transform: translate(-50%, -50%); transition: left 900ms cubic-bezier(.2,.9,.2,1), width 900ms cubic-bezier(.2,.9,.2,1), height 900ms cubic-bezier(.2,.9,.2,1); }
+    .bar-labels { display: flex; justify-content: space-between; gap: 18px; color: var(--subtext); font-size: 12px; font-weight: 720; line-height: 1.4; }
+
+    /* MARKET POSITION */
+    .market-list { margin-top: clamp(38px, 6vw, 64px); display: grid; gap: 0; }
+    .market-item { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 24px 0; border-top: 1px solid var(--line); }
+    .market-item:last-child { border-bottom: 1px solid var(--line); }
+    .market-rank { color: var(--muted); font-size: 13px; font-weight: 800; letter-spacing: 0.12em; min-width: 28px; }
+    .market-name { font-size: clamp(22px, 3vw, 32px); font-weight: 860; letter-spacing: 0.02em; flex: 1; }
+    .market-sync { text-align: right; }
+    .market-sync-num { font-size: clamp(32px, 5vw, 48px); font-weight: 900; line-height: 1; }
+    .market-sync-label { font-size: 11px; font-weight: 800; letter-spacing: 0.16em; color: var(--muted); margin-top: 2px; }
+    .market-note { margin-top: 28px; color: var(--subtext); font-size: 14px; line-height: 1.7; word-break: keep-all; }
+
+    /* INTERPRETATION ROOM */
+    .invite-layout { display: grid; grid-template-columns: minmax(0, 1.02fr) minmax(320px, 0.98fr); gap: clamp(36px, 7vw, 88px); align-items: start; }
+    .invite-copy { margin-top: 30px; max-width: 560px; color: var(--text); font-size: clamp(16px, 1.5vw, 19px); line-height: 1.8; word-break: keep-all; }
+    .invite-block { margin: 0 0 clamp(28px, 4vw, 36px); }
+    .invite-block:last-child { margin-bottom: 0; }
+    .invite-label { margin-bottom: 12px; color: #777; font-size: 12px; font-weight: 820; letter-spacing: 0.16em; text-transform: uppercase; }
+    .invite-block p:not(.invite-label) + p { margin-top: 12px; }
+
+    /* FORM */
+    .form-panel { border: 1px solid var(--black); background: rgba(255,255,255,0.5); padding: clamp(22px, 4vw, 34px); }
+    .form-title { font-size: 24px; font-weight: 860; }
+    .lead-form { margin-top: 24px; display: grid; gap: 16px; }
+    .field { display: grid; gap: 8px; }
+    .field label { color: var(--subtext); font-size: 12px; font-weight: 820; letter-spacing: 0.08em; }
+    .field input, .field select { width: 100%; min-height: 48px; border: 0; border-bottom: 1px solid var(--black); border-radius: 0; background: transparent; color: var(--text); padding: 0 2px; outline: none; }
+    .field input:focus, .field select:focus { border-bottom-color: var(--focus); box-shadow: 0 1px 0 var(--focus); }
+    .form-help { color: var(--subtext); font-size: 12px; line-height: 1.65; word-break: keep-all; }
+    .form-error { min-height: 20px; color: var(--danger); font-size: 13px; line-height: 1.5; }
+    .form-actions { display: grid; gap: 12px; margin-top: 6px; }
+    .form-actions .primary-btn, .form-actions .secondary-btn { width: 100%; }
+    .complete-box { display: none; border: 1px solid var(--black); background: var(--black); color: var(--white); padding: clamp(26px, 5vw, 42px); }
+    .complete-box.is-active { display: block; animation: fadeUp 360ms ease forwards; }
+    .complete-box h3 { font-size: 30px; line-height: 1.25; word-break: keep-all; }
+    .complete-box p { margin-top: 18px; color: rgba(255,255,255,0.75); line-height: 1.75; word-break: keep-all; }
+
+    /* RESPONSIVE */
+    @media (max-width: 820px) {
+      .wrap { width: min(100% - 28px, var(--max)); }
+      .intro-actions, .question-bottom { align-items: stretch; flex-direction: column; }
+      .primary-btn, .secondary-btn { width: 100%; }
+      .question-meta { align-items: flex-start; flex-direction: column; }
+      .anchors { grid-template-columns: 1fr; gap: 12px; }
+      .anchor { min-height: auto; font-size: 17px; }
+      .anchor.right { text-align: left; }
+      .anchor-vs { display: block; }
+      .dots { gap: 4px; }
+      .dot-btn { height: 52px; }
+      .scale-labels { gap: 6px; font-size: 12px; }
+      .choice-feedback { font-size: 13px; }
+      .analysis { align-items: flex-start; padding-top: 120px; }
+      .analysis-title { font-size: 52px; line-height: 1; }
+      .insight-grid, .invite-layout { grid-template-columns: 1fr; }
+      .insight-card { padding: 18px; }
+      .axis-item { grid-template-columns: 1fr; gap: 18px; }
+      .result-section { min-height: auto; }
+      .market-sync-num { font-size: 32px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+
+    <!-- INTRO -->
+    <section id="introScreen" class="screen intro is-active" aria-labelledby="introTitle">
+      <div class="wrap intro-inner">
+        <div class="brand-mark">ZEROBLACK®</div>
+        <div class="intro-copy">
+          <h1 id="introTitle" class="intro-title">당신의 브랜드는 어디에 있습니까?</h1>
+          <p class="intro-sub">30개의 선택으로 상품기획, 사진 감도, 스타일링 성향을 분석합니다.<br>브랜드가 기억되는 방식과 다음 시즌의 방향을 확인해보세요.</p>
+        </div>
+        <div class="intro-actions">
+          <button id="startBtn" class="primary-btn" type="button">브랜드 타입 진단 시작하기 →</button>
+          <p class="note">약 3분 · 가입 없이 바로 확인</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PART TRANSITION -->
+    <section id="partTransition" class="part-transition" aria-live="polite">
+      <div class="wrap">
+        <p id="partKicker" class="part-kicker"></p>
+        <h2 id="partTitle" class="part-title"></h2>
+        <p id="partDesc" class="part-desc"></p>
+      </div>
+    </section>
+
+    <!-- QUESTION -->
+    <section id="questionScreen" class="screen question-screen" aria-labelledby="questionText">
+      <div class="wrap question-shell">
+        <header class="question-top">
+          <div class="question-meta">
+            <span id="partLabel">PART 1 / 상품기획</span>
+            <span id="countLabel">01 / 30</span>
+          </div>
+          <div class="progress-track" aria-hidden="true">
+            <div id="progressBar" class="progress-bar"></div>
+          </div>
+        </header>
+        <article id="questionCard" class="question-card">
+          <div>
+            <p id="questionNumber" class="question-number">Q1</p>
+            <h2 id="questionText" class="question-title"></h2>
+          </div>
+          <div class="choice-area">
+            <div class="anchors">
+              <p id="leftAnchor" class="anchor"></p>
+              <span class="anchor-vs" aria-hidden="true">VS</span>
+              <p id="rightAnchor" class="anchor right"></p>
+            </div>
+            <div id="dotGroup" class="dots" role="radiogroup" aria-label="답변 선택"></div>
+            <div class="scale-labels">
+              <span id="leftShortLabel"></span>
+              <span>중간</span>
+              <span id="rightShortLabel"></span>
+            </div>
+            <div id="choiceFeedback" class="choice-feedback" aria-live="polite"></div>
+          </div>
+        </article>
+        <footer class="question-bottom">
+          <button id="backBtn" class="back-btn" type="button">← 이전 질문</button>
+          <p class="note">선택하면 다음 문항으로 이동합니다.</p>
+        </footer>
+      </div>
+    </section>
+
+    <!-- ANALYSIS -->
+    <section id="analysisScreen" class="analysis" aria-live="polite" aria-labelledby="analysisTitle">
+      <div class="analysis-inner">
+        <p class="analysis-kicker">ZEROTYPE ANALYSIS</p>
+        <h1 id="analysisTitle" class="analysis-title">심층 분석중입니다.</h1>
+        <p id="analysisStepText" class="analysis-step">상품기획 성향을 정리하는 중</p>
+        <div class="analysis-bar" aria-hidden="true">
+          <div id="analysisBarFill" class="analysis-bar-fill"></div>
+        </div>
+        <p class="analysis-note">30개의 선택을 바탕으로 브랜드의 상품기획, 사진 감도, 스타일링 방향을 정리하고 있습니다.</p>
+      </div>
+    </section>
+
+    <!-- RESULTS -->
+    <section id="resultScreen" class="screen results" aria-live="polite">
+
+      <!-- 섹션 01: 유형 결과 -->
+      <section class="result-section" aria-labelledby="resultName">
+        <div class="wrap">
+          <p class="eyebrow">YOUR ZEROTYPE / ANALYSIS COMPLETE</p>
+          <h2 id="resultName" class="result-name"></h2>
+          <p id="resultSubtitle" class="result-subtitle"></p>
+          <div class="insight-grid">
+            <article class="insight-card">
+              <h3>STRENGTH</h3>
+              <p id="strengthText"></p>
+            </article>
+            <article class="insight-card">
+              <h3>RISK</h3>
+              <p id="riskText"></p>
+            </article>
+            <article class="insight-card">
+              <h3>ZEROBLACK PRESCRIPTION</h3>
+              <p id="prescriptionText"></p>
+            </article>
+          </div>
+          <p class="scroll-note">스크롤을 내려 3대 비주얼 지표를 확인하세요 ↓</p>
+        </div>
+      </section>
+
+      <!-- 섹션 02: 3대 비주얼 지표 -->
+      <section class="result-section" aria-labelledby="axisTitle">
+        <div class="wrap">
+          <p class="eyebrow">02 — 3대 비주얼 지표</p>
+          <h2 id="axisTitle" class="section-title">3대 축 비주얼 지표 지향점 분석</h2>
+          <div class="axis-list">
+            <article class="axis-item">
+              <h3>상품기획 성향</h3>
+              <div class="axis-copy">
+                <p id="xDescription"></p>
+                <div class="axis-bar">
+                  <div class="axis-track"><span id="xDot" class="axis-dot"></span></div>
+                  <div class="bar-labels"><span>기본기 / 대중성</span><span>디자인 / 독창성</span></div>
+                </div>
+              </div>
+            </article>
+            <article class="axis-item">
+              <h3>톤앤매너 감도</h3>
+              <div class="axis-copy">
+                <p id="yDescription"></p>
+                <div class="axis-bar">
+                  <div class="axis-track"><span id="yDot" class="axis-dot"></span></div>
+                  <div class="bar-labels"><span>정보 중심 / 상업적 신뢰</span><span>분위기 / 세계관</span></div>
+                </div>
+              </div>
+            </article>
+            <article class="axis-item">
+              <h3>스타일링 디렉팅 강도</h3>
+              <div class="axis-copy">
+                <p id="sDescription"></p>
+                <div class="axis-bar">
+                  <div class="axis-track"><span id="sDot" class="axis-dot"></span></div>
+                  <div class="bar-labels"><span>절제 / 단품 중심</span><span>레이어드 / 토탈룩 중심</span></div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- 섹션 03: 마켓 포지션 매치 -->
+      <section class="result-section" aria-labelledby="marketTitle">
+        <div class="wrap">
+          <p class="eyebrow">03 — MARKET POSITION MATCH</p>
+          <h2 id="marketTitle" class="section-title">당신의 브랜드와 가장 가까운 마켓 포지션 Top 3</h2>
+          <p style="margin-top:16px; color:var(--subtext); font-size:clamp(16px,1.8vw,20px); line-height:1.7; word-break:keep-all;">제로블랙 브랜드 맵 분석 결과, 현재 비주얼 흐름이 가장 유사한 매칭 군입니다.</p>
+          <div id="marketList" class="market-list"></div>
+          <p class="market-note">브랜드명과 상세 포지션 분석은 오프라인 브랜드 비주얼 진단에서 공개됩니다.</p>
+        </div>
+      </section>
+
+      <!-- 섹션 04: INTERPRETATION ROOM -->
+      <section class="result-section" aria-labelledby="inviteTitle">
+        <div class="wrap invite-layout">
+          <div>
+            <p class="eyebrow">04 — INTERPRETATION ROOM</p>
+            <h2 id="inviteTitle" class="section-title">당신의 결과는 시작점입니다.</h2>
+            <div class="invite-copy">
+              <div class="invite-block">
+                <p class="invite-label">01 SELF-DIAGNOSIS</p>
+                <p>방금 확인한 유형은 브랜드가 상품을 만들고, 사진을 선택하고, 스타일링을 구성할 때 어떤 방향으로 기울어져 있는지 보여주는 간단한 자가진단입니다.</p>
+              </div>
+              <div class="invite-block">
+                <p class="invite-label">02 WHY INTERPRETATION</p>
+                <p>하지만 실제 브랜드는 한 가지 유형만으로 설명되지 않습니다.</p>
+                <p>잘 팔리는 상품과 기억되는 이미지 사이의 간격, 룩북에서 반복되는 장점과 놓치는 약점은 화면 속 결과보다 훨씬 입체적입니다.</p>
+              </div>
+              <div class="invite-block">
+                <p class="invite-label">03 ZEROBLACK REVIEW</p>
+                <p>신청 후 제로블랙이 룩북, 상품 구성, 인스타그램 흐름을 검토하며, 비주얼 진단이 의미 있는 브랜드에 한해 1시간 오프라인 브랜드 비주얼 진단을 안내합니다.</p>
+                <p>상품이 더 잘 보이는 방식, 브랜드가 더 오래 기억되는 방식, 다음 시즌에 선택해야 할 비주얼 방향을 함께 정리합니다.</p>
+                <p>당신의 브랜드와 싱크율이 높은 마켓 포지션은 오프라인 진단에서 확인하실 수 있습니다.</p>
+              </div>
+            </div>
+          </div>
+          <aside>
+            <div id="formPanel" class="form-panel">
+              <h3 class="form-title">내 브랜드 해석 신청하기</h3>
+              <form id="leadForm" class="lead-form" novalidate>
+                <div class="field">
+                  <label for="brandName">브랜드명</label>
+                  <input id="brandName" name="brandName" autocomplete="organization" required>
+                </div>
+                <div class="field">
+                  <label for="applicantName">신청자명</label>
+                  <input id="applicantName" name="applicantName" autocomplete="name" required>
+                </div>
+                <div class="field">
+                  <label for="contact">연락처</label>
+                  <input id="contact" name="contact" autocomplete="tel" required>
+                </div>
+                <div class="field">
+                  <label for="instagram">인스타그램 계정 주소</label>
+                  <input id="instagram" name="instagram" autocomplete="url" placeholder="https://instagram.com/brand" required>
+                </div>
+                <div class="field">
+                  <label for="concern">현재 가장 고민되는 것</label>
+                  <select id="concern" name="concern">
+                    <option value="">선택</option>
+                    <option>룩북 톤앤매너가 매 시즌 흔들린다</option>
+                    <option>상품은 괜찮은데 이미지가 기억되지 않는다</option>
+                    <option>매출은 나지만 브랜드 색깔이 약하다</option>
+                    <option>스타일링, 모델, 촬영 방향을 정하기 어렵다</option>
+                    <option>다음 시즌 리브랜딩 또는 방향 전환이 필요하다</option>
+                    <option>기타</option>
+                  </select>
+                </div>
+                <p class="form-help">신청 내용을 검토한 뒤, 비주얼 진단이 의미 있는 브랜드에 한해 개별 연락드립니다.<br>제출 시 오프라인 진단 안내를 위한 개인정보 수집에 동의한 것으로 간주합니다.</p>
+                <p id="formError" class="form-error" role="alert"></p>
+                <div class="form-actions">
+                  <button class="primary-btn" type="submit">내 브랜드 해석 신청하기</button>
+                  <button id="restartBtn" class="secondary-btn" type="button">진단 다시하기</button>
+                </div>
+              </form>
+            </div>
+            <div id="completeBox" class="complete-box" tabindex="-1">
+              <h3>신청이 접수되었습니다.</h3>
+              <p>남겨주신 브랜드 정보를 검토한 뒤,<br>비주얼 진단이 의미 있는 브랜드에 한해 개별 연락드리겠습니다.</p>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+    </section>
+  </main>
+
+  <script>
+    // ─── 질문 데이터 ───────────────────────────────────────────────
+    const questions = [
+      // PART 1: 상품기획 (X축) - 가중치: Q1×2, Q4×2
+      { id:1,  part:1, axis:"X", weight:2, question:"우리 브랜드의 메인 아이템은 어느 쪽에 가깝습니까?", left:"매일 입어도 질리지 않는 기본기", right:"국내에선 찾기 어려운 독창적인 디자인", leftShort:"기본기 중심", rightShort:"독창성 중심" },
+      { id:2,  part:1, axis:"X", weight:1, question:"브랜드의 가격대를 설정하는 기준은 어느 쪽입니까?", left:"더 많은 소비자가 접근할 수 있는 합리적인 가격대", right:"브랜드 가치와 희소성을 지키는 프리미엄 포지셔닝", leftShort:"합리적 가격대", rightShort:"프리미엄 포지셔닝" },
+      { id:3,  part:1, axis:"X", weight:1, question:"상품 기획을 시작할 때 가장 먼저 참고하는 기준은?", left:"주요 패션 플랫폼의 최근 동향 데이터", right:"해외 컬렉션과 독자적인 인스피레이션 아카이브", leftShort:"판매 데이터", rightShort:"영감 아카이브" },
+      { id:4,  part:1, axis:"X", weight:2, question:"디렉터로서 심장을 뛰게 만드는 고객 후기는?", left:"\"핏이 편해서 시즌 내내 매일 손이 가요\"", right:"\"입는 순간 나만의 캐릭터가 생겨요\"", leftShort:"편한 옷", rightShort:"캐릭터 있는 옷" },
+      { id:5,  part:1, axis:"X", weight:1, question:"시즌이 끝났을 때 가장 뼈아픈 실패는?", left:"안정적인 판매 볼륨을 확보하지 못한 것", right:"대중성 눈치 보느라 브랜드 자아를 타협한 것", leftShort:"판매 볼륨", rightShort:"브랜드 자아" },
+      { id:6,  part:1, axis:"X", weight:1, question:"신상품 컬러를 기획할 때 내 무게중심은 어느 쪽입니까?", left:"블랙, 네이비, 멜란지 등 무채색 위주의 안정감", right:"시즌 콘셉트를 단번에 시각화하는 선명한 포인트 컬러", leftShort:"안정 컬러", rightShort:"시즌 컬러" },
+      { id:7,  part:1, axis:"X", weight:1, question:"메인 원단을 고를 때 절대 양보할 수 없는 기준은?", left:"자주 세탁해도 수축이나 뒤틀림이 없는 내구성", right:"터치하거나 멀리서 봐도 바로 느껴지는 독특한 텍스쳐", leftShort:"내구성", rightShort:"텍스쳐" },
+      { id:8,  part:1, axis:"X", weight:1, question:"브랜드의 타깃 고객을 설정하는 방식은?", left:"연령대와 라이프스타일을 넓게 열어 많은 소비자를 포용한다", right:"취향과 가치관이 맞는 특정 고객을 좁고 깊게 겨냥한다", leftShort:"넓은 타깃", rightShort:"좁고 깊은 타깃" },
+      { id:9,  part:1, axis:"X", weight:1, question:"한 시즌에 출시하는 아이템 수는 어느 쪽에 가깝습니까?", left:"다양한 선택지를 위해 폭넓은 라인업을 구성한다", right:"핵심 아이템에 집중해 소수를 깊게 완성한다", leftShort:"폭넓은 라인업", rightShort:"소수 집중" },
+      { id:10, part:1, axis:"X", weight:1, question:"콜라보 파트너로 더 끌리는 인플루언서는?", left:"대중적인 인지도가 높고 친숙한 인플루언서", right:"자기 색깔이 독보적인 인플루언서", leftShort:"친숙한 얼굴", rightShort:"독보적 얼굴" },
+
+      // PART 2: 톤앤매너 (Y축) - 가중치: Q13×2, Q16×2
+      { id:11, part:2, axis:"Y", weight:1, question:"비주얼 기획을 시작할 때 레퍼런스를 모으는 방식은?", left:"잘 팔리는 브랜드 룩북과 플랫폼 상위 노출 이미지 중심", right:"영화, 미술, 건축 등 패션 외 분야에서 영감을 끌어온다", leftShort:"시장 레퍼런스", rightShort:"크로스 레퍼런스" },
+      { id:12, part:2, axis:"Y", weight:1, question:"포토그래퍼를 선정하는 기준은 무엇입니까?", left:"상업적 신뢰도가 누적된 사진가", right:"고유의 시각적 세계관을 증명하는 사진가", leftShort:"상업적 신뢰", rightShort:"시각적 세계관" },
+      { id:13, part:2, axis:"Y", weight:2, question:"룩북 촬영 배경으로 선호하는 공간은?", left:"깔끔하고 담백해서 모델과 옷에 집중되는 공간", right:"다양한 소품과 시각적 재미가 있는 공간", leftShort:"담백한 공간", rightShort:"시각적 공간" },
+      { id:14, part:2, axis:"Y", weight:1, question:"룩북 속 모델의 시선과 표정 연출은 어느 쪽입니까?", left:"상업적 호감을 유발하는 내추럴 마스크", right:"단 한 장으로 묘한 서사를 만드는 얼굴", leftShort:"상업적 호감", rightShort:"묘한 서사" },
+      { id:15, part:2, axis:"Y", weight:1, question:"포토그래퍼에게 요청하는 라이팅 무드는?", left:"옷의 형태와 실물이 고르게 보이는 통일감 있는 빛", right:"역광, 강한 실루엣 등 컷마다 다채롭게 변주하는 빛", leftShort:"통일감 있는 빛", rightShort:"변주하는 빛" },
+      { id:16, part:2, axis:"Y", weight:2, question:"최종 사진에서 선호하는 톤 질감은?", left:"화이트밸런스가 정확한 클린 톤", right:"거친 필름 그레인과 색이 뒤섞인 영화적인 톤", leftShort:"클린 톤", rightShort:"영화적 톤" },
+      { id:17, part:2, axis:"Y", weight:1, question:"모니터링할 때 더 만족스러운 카메라 구도는?", left:"인물과 옷의 밸런스가 안정적인 아이레벨 구도", right:"하이/로우 앵글이나 과감하게 프레임을 잘라내는 구도", leftShort:"안정 구도", rightShort:"과감한 구도" },
+      { id:18, part:2, axis:"Y", weight:1, question:"한 착장의 상세페이지 구성 방식은 어느 쪽입니까?", left:"전면, 측면, 후면의 정보 전달 중심 카탈로그식 배치", right:"아티스틱한 사진 중심으로 감정과 여백을 남기는 배치", leftShort:"정보 전달", rightShort:"감정과 여백" },
+      { id:19, part:2, axis:"Y", weight:1, question:"소비자가 브랜드 비주얼을 처음 봤을 때 남기고 싶은 잔상은?", left:"완성도 높은 옷 자체의 디자인", right:"브랜드의 세계관과 분위기를 보여주는 이미지", leftShort:"옷 자체", rightShort:"세계관 이미지" },
+      { id:20, part:2, axis:"Y", weight:1, question:"새 컬렉션을 처음 공개하는 방식은 어느 쪽입니까?", left:"상품 디테일과 가격, 출시일 등 정보를 먼저 공개한다", right:"무드 이미지로 기대감을 먼저 만들고 정보는 나중에 공개한다", leftShort:"정보 선공개", rightShort:"무드 선공개" },
+
+      // PART 3: 스타일링 강도 (S축) - 가중치: Q21×2, Q30×2
+      { id:21, part:3, axis:"S", weight:2, question:"비주얼 기획에서 스타일링의 진짜 역할은 무엇입니까?", left:"디자인의 매력을 살려주는 조연", right:"브랜드의 태도와 서사를 드러내는 주인공", leftShort:"조연", rightShort:"주인공" },
+      { id:22, part:3, axis:"S", weight:1, question:"룩북 촬영 예산을 배분할 때 내 우선순위는?", left:"상품과 모델에 집중, 스타일링은 최소화", right:"스타일링·소품·세트까지 촬영 전체의 밀도에 투자", leftShort:"상품 집중", rightShort:"촬영 밀도" },
+      { id:23, part:3, axis:"S", weight:1, question:"룩북 모델을 캐스팅할 때 더 끌리는 쪽은?", left:"옷을 방해하지 않는 깨끗하고 중성적인 인상", right:"강한 개성과 서사가 있는 얼굴", leftShort:"중성적 인상", rightShort:"강한 개성" },
+      { id:24, part:3, axis:"S", weight:1, question:"촬영 장소와 세트를 준비하는 내 태도는?", left:"옷이 돋보이도록 공간은 최대한 절제한다", right:"공간과 소품까지 디렉팅해서 세계관을 완성한다", leftShort:"공간 절제", rightShort:"세계관 완성" },
+      { id:25, part:3, axis:"S", weight:1, question:"헤어 & 메이크업 실장에게 주문하는 뉘앙스는?", left:"옷과 어우러지는 깔끔한 내추럴 스타일", right:"젖은 머리나 엣지있는 포인트로 개성을 살리는 스타일", leftShort:"내추럴 스타일", rightShort:"개성 스타일" },
+      { id:26, part:3, axis:"S", weight:1, question:"모델을 카메라 앞에 세우기 직전, 내 마지막 손길은 어느 쪽입니까?", left:"소품을 빼고 옷 본연의 핏과 실루엣만 정돈한다", right:"모자, 가방, 선글라스 등 소품을 겹겹이 매칭한다", leftShort:"실루엣 정돈", rightShort:"소품 레이어" },
+      { id:27, part:3, axis:"S", weight:1, question:"현장에서 모니터를 볼 때 시선이 먼저 가는 곳은?", left:"메인 아이템의 핏과 잔주름 없는지 점검", right:"머리부터 발끝까지 전체 레이어드의 밸런스 체크", leftShort:"단품 핏", rightShort:"전체 룩" },
+      { id:28, part:3, axis:"S", weight:1, question:"촬영 중 마음에 안 드는 컷이 나왔을 때 기준은?", left:"상품의 핏과 색감이 정확하게 보이면 통과", right:"무드와 아우라가 살아있지 않으면 다시 찍는다", leftShort:"정보 정확도", rightShort:"무드 완성도" },
+      { id:29, part:3, axis:"S", weight:1, question:"촬영 후 최종 컷을 고를 때 기준은?", left:"상품이 가장 잘 보이는 컷", right:"브랜드 무드가 가장 강한 컷", leftShort:"상품 중심", rightShort:"무드 중심" },
+      { id:30, part:3, axis:"S", weight:2, question:"룩북 공개 후 기획자로서 소름 돋는 반응은?", left:"\"내일 아침 이 스타일링 그대로 입고 싶어요\"", right:"\"이 조합 신선하다! 큰 영감을 받았어요\"", leftShort:"따라 입고 싶은 룩", rightShort:"신선한 조합" },
+    ];
+
+    // ─── 브랜드맵 데이터 ───────────────────────────────────────────
+    const brandMap = [
+      { name:"Thomasmore",    x:0,   y:30,  s:70 },
+      { name:"Harritage floss", x:30, y:40, s:70 },
+      { name:"Youth",         x:60,  y:45,  s:40 },
+      { name:"Le ete",        x:-80, y:40,  s:20 },
+      { name:"Amomento",      x:70,  y:70,  s:80 },
+      { name:"Moia",          x:20,  y:60,  s:40 },
+      { name:"Eaah",          x:0,   y:-50, s:20 },
+      { name:"Toutyest",      x:10,  y:60,  s:70 },
+      { name:"Loeuvre",       x:50,  y:50,  s:50 },
+      { name:"Nothing-written", x:0, y:40,  s:50 },
+      { name:"Urbanic30",     x:30,  y:60,  s:50 },
+      { name:"The aperture",  x:-50, y:50,  s:40 },
+      { name:"The barnet",    x:-50, y:40,  s:60 },
+      { name:"Gimaguas",      x:70,  y:40,  s:80 },
+      { name:"Aubour",        x:20,  y:10,  s:60 },
+      { name:"Folnua",        x:10,  y:50,  s:30 },
+      { name:"le17semtembre", x:50,  y:40,  s:70 },
+      { name:"ethos",         x:50,  y:50,  s:80 },
+      { name:"rrace",         x:0,   y:40,  s:20 },
+      { name:"Pottery",       x:-90, y:50,  s:20 },
+      { name:"umarmung",      x:20,  y:10,  s:30 },
+      { name:"Urago",         x:0,   y:0,   s:20 },
+      { name:"Dunst",         x:0,   y:60,  s:50 },
+      { name:"Levar",         x:-50, y:0,   s:60 },
+      { name:"Kinder Salon",  x:30,  y:60,  s:20 },
+      { name:"Vet woman",     x:30,  y:30,  s:60 },
+      { name:"Siyazu",        x:-20, y:0,   s:20 },
+      { name:"Moondal",       x:10,  y:30,  s:50 },
+      { name:"Recto",         x:50,  y:40,  s:70 },
+      { name:"Tomywack",      x:30,  y:10,  s:70 },
+      { name:"Orr",           x:10,  y:30,  s:60 },
+      { name:"andyou",        x:0,   y:0,   s:30 },
+      { name:"맥우드건",       x:-20, y:70,  s:80 },
+      { name:"Beheavyer",     x:50,  y:50,  s:20 },
+      { name:"디네뎃",         x:-50, y:30,  s:20 },
+      { name:"Lowclassic",    x:10,  y:50,  s:20 },
+      { name:"문선",           x:50,  y:30,  s:0  },
+      { name:"폴리테루",       x:40,  y:20,  s:50 },
+      { name:"Coor",          x:0,   y:10,  s:20 },
+      { name:"Tecket",        x:60,  y:70,  s:80 },
+      { name:"썬번프로젝트",   x:20,  y:30,  s:60 },
+      { name:"썬러브투어",     x:40,  y:40,  s:60 },
+      { name:"유센틱",         x:20,  y:0,   s:70 },
+      { name:"솔티페블",       x:50,  y:0,   s:50 },
+      { name:"오버듀플에어",   x:60,  y:0,   s:80 },
+      { name:"아우어솔티",     x:50,  y:0,   s:80 },
+      { name:"크랭크",         x:-50, y:20,  s:80 },
+      { name:"론론",           x:-20, y:30,  s:50 },
+      { name:"시눈",           x:10,  y:20,  s:60 },
+      { name:"락피쉬",         x:-70, y:-30, s:30 },
+      { name:"꼬모나노즈",     x:-40, y:40,  s:60 },
+      { name:"글로니",         x:40,  y:60,  s:80 },
+      { name:"마지셔우드",     x:10,  y:30,  s:60 },
+      { name:"오소이",         x:20,  y:40,  s:70 },
+      { name:"999humanity",   x:30,  y:50,  s:80 },
+      { name:"seensee",       x:10,  y:20,  s:50 },
+      { name:"toomuchtok",    x:60,  y:50,  s:80 },
+      { name:"fancyclub",     x:40,  y:60,  s:80 },
+      { name:"킴미더영",       x:30,  y:50,  s:70 },
+      { name:"세이스라",       x:0,   y:20,  s:50 },
+      { name:"폴리수엠",       x:20,  y:30,  s:60 },
+      { name:"dared",         x:40,  y:50,  s:70 },
+      { name:"Martin kim",    x:30,  y:40,  s:80 },
+      { name:"Yuse",          x:20,  y:40,  s:70 },
+      { name:"파르티멘토",     x:-70, y:-40, s:40 },
+      { name:"웰빙익스프레스", x:10,  y:30,  s:70 },
+      { name:"노컨텐츠",       x:-60, y:-50, s:30 },
+      { name:"Ourhope",       x:-40, y:10,  s:20 },
+      { name:"포에브",         x:60,  y:40,  s:80 },
+      { name:"호쿠스포쿠스",   x:50,  y:50,  s:90 },
+      { name:"플리즈프로젝트", x:40,  y:50,  s:80 },
+      { name:"타입서비스",     x:-50, y:-30, s:40 },
+      { name:"Tuomio",        x:20,  y:40,  s:70 },
+      { name:"오헤시오",       x:10,  y:20,  s:50 },
+      { name:"미세키서울",     x:30,  y:50,  s:70 },
+      { name:"코이세이오",     x:40,  y:60,  s:80 },
+      { name:"Pesto",         x:20,  y:30,  s:70 },
+      { name:"미스치프",       x:60,  y:70,  s:90 },
+      { name:"나이스고스트클럽", x:40, y:50, s:80 },
+      { name:"산산기어",       x:95,  y:80,  s:80 },
+      { name:"Ojos",          x:40,  y:60,  s:80 },
+      { name:"오들리워크샵",   x:20,  y:40,  s:70 },
+      { name:"SEO",           x:50,  y:70,  s:80 },
+      { name:"보헤미안서울",   x:30,  y:60,  s:80 },
+      { name:"Openyy",        x:40,  y:70,  s:80 },
+      { name:"Trinning bird", x:30,  y:50,  s:70 },
+      { name:"Sculptor",      x:20,  y:50,  s:80 },
+      { name:"604Service",    x:20,  y:40,  s:70 },
+      { name:"나체",           x:90,  y:80,  s:90 },
+      { name:"LCDC",          x:20,  y:40,  s:70 },
+      { name:"Eonts",         x:30,  y:60,  s:80 },
+      { name:"EE",            x:30,  y:50,  s:70 },
+      { name:"인앤양하모니",   x:10,  y:30,  s:60 },
+      { name:"해칭룸",         x:40,  y:60,  s:80 },
+      { name:"닙그너스",       x:60,  y:70,  s:80 },
+      { name:"아더에러",       x:70,  y:80,  s:90 },
+      { name:"오데스",         x:20,  y:40,  s:70 },
+      { name:"아트이프액츠",   x:80,  y:80,  s:80 },
+      { name:"루루서울",       x:10,  y:30,  s:60 },
+      { name:"위캔더스",       x:-20, y:20,  s:50 },
+      { name:"인더로우",       x:-10, y:30,  s:50 },
+      { name:"모노하",         x:20,  y:40,  s:70 },
+      { name:"어썸니즈",       x:30,  y:50,  s:70 },
+      { name:"앤더슨벨",       x:40,  y:70,  s:80 },
+      { name:"브렌다브렌든서울", x:10, y:30, s:60 },
+      { name:"ASP",           x:-20, y:20,  s:60 },
+      { name:"Soonsu",        x:-20, y:20,  s:60 },
+    ];
+
+    // ─── 결과 데이터 ───────────────────────────────────────────────
+    const results = {
+      artist: {
+        name: "아티스트형",
+        subtitle: "옷보다 먼저 \"장면\"이 기억되는 타입. 강렬한 세계관이 브랜드의 엔진입니다. 🎬",
+        strength: "압도적인 비주얼 서사와 강렬한 이미지 잔상. 고유의 예술성으로 마니아층을 매료시키는 능력이 뛰어납니다. 옷을 단순한 상품이 아니라 디렉터의 거대한 자아를 표현하는 예술적 오브제로 다룰 줄 압니다.",
+        risk: "이미지의 아우라에 가려져 소비자가 상세페이지에서 제품의 실질적인 디테일과 착용 실루엣을 인지하지 못할 때 펀넬이 깨집니다.",
+        prescription: "룩북을 70:30(판매컷:캠페인컷)으로 나누고 히어로 상품 3개를 캠페인에 반복 등장시키세요. 예술적 톤앤매너의 텐션은 유지하되, 스크롤 하단에는 제품의 핏과 원단감이 정직하게 보이는 클린 컷을 반드시 받쳐주어야 합니다."
+      },
+      fandom: {
+        name: "팬덤몰이형",
+        subtitle: "착장이 말을 걸어오는 타입. \"입는 법\"까지 제안하는 브랜드입니다. 🧢",
+        strength: "독창적인 기획 아이템과 과감하고 신선한 토탈 스타일링 제안력으로 구축된 매니아 팬덤. 고객들이 단품을 사는 것이 아니라 디렉터가 묶어놓은 착장 밸런스 전체를 동경하며 장바구니를 채우게 만듭니다.",
+        risk: "스타일링의 신선함에만 의존하다 보면 브랜드 고유의 시그니처 아이템이 흐려져 팬들의 충성도가 단기 트렌드에 종속되기 쉽습니다.",
+        prescription: "시즌마다 흔들리지 않는 에센셜 10개와 시그니처 착장 2개를 고정해서 아카이브를 쌓으세요. 코디 조합의 자극을 한 단계 낮추더라도 브랜드를 상징하는 고유의 실루엣 패턴을 명확히 정의해 기본 뼈대를 단단히 굳혀야 합니다."
+      },
+      analog: {
+        name: "아날로그 감성형",
+        subtitle: "필름 같은 온도와 고요한 여백. 보는 사람의 마음을 천천히 잠그는 무드가 있는 타입입니다. 📷",
+        strength: "정돈된 데일리 아이템 위에 얹어진 탁월한 아날로그 톤앤매너. 빛과 그림자의 은은한 깊이감과 특유의 고요한 공기감으로 소비자에게 시각적 피로감 대신 아늑하고 고급스러운 소장 가치를 전달합니다.",
+        risk: "감성에만 몰입해 비주얼의 극적 텐션이나 컷의 변주가 사라지면, 매 시즌 신상품을 출시해도 고객에게는 지난 시즌의 연장선처럼 느껴집니다.",
+        prescription: "전체적인 무드의 결은 이어가되, 앵글 1개, 그림자 1개, 동작 1개 중 하나만 변주해 화면에 확실한 시각적 브레이크를 걸어주세요. 모델의 시선 처리나 조명의 날카로운 대비를 핀포인트로 활용하면 충분합니다."
+      },
+      oneTwist: {
+        name: "한끗 컨템형",
+        subtitle: "대중성과 감도의 황금 밸런스. \"좋아 보이는데 무리 없네?\"가 바로 나오는 타입입니다. 🪙",
+        strength: "매력적인 변형 실루엣 기획력과 감도 높은 비주얼의 조화. 대중이 수용할 수 있는 현실적인 경계선 안에서 가장 세련된 한끗을 본능적으로 찾아내 세일즈 전환을 유도하는 능력이 뛰어납니다.",
+        risk: "마켓의 미니멀 컨템포러리 장르는 진입 장벽이 낮기 때문에, 브랜드 고유의 디테일 실험을 멈추는 순간 순식간에 평범한 커머셜 브랜드로 전락합니다.",
+        prescription: "매 시즌 한 가지 시그니처 변형, 즉 디테일·실루엣·색 중 하나만 누적해서 대체 불가 포인트를 만드세요. 다른 요소들은 철저히 안정감 있게 누르더라도, 특정 원단이나 비정형 절개 라인 하나만큼은 매 시즌 독점적인 시그니처로 가져가야 합니다."
+      },
+      quietMinimal: {
+        name: "조용한 미니멀형",
+        subtitle: "로고 없이도 설득되는 격. 소재와 핏이 조용히 압승하는 타입입니다. 🗿",
+        strength: "군더더기 없는 완벽한 완성도와 정직한 카탈로그 톤앤매너. 요란한 그래픽이나 연출 없이 오직 원단 고유의 텍스처와 정밀한 패턴 핏만으로 브랜드의 은은한 격조를 설득해내는 뚝심을 가지고 있습니다.",
+        risk: "비주얼의 연출 밀도와 자극이 극도로 낮다 보니 룩북의 첫인상이 다소 경직되어 보이고, 플랫폼 피드에서 신규 고객의 시선을 멈추게 하기 어렵습니다.",
+        prescription: "스타일은 그대로 두고 사진에서만 과감해지세요. 클로즈업 텍스처 5컷과 구조적 구도 3컷으로 유입을 만드세요. 옷을 껴입히는 장식적 스타일링 대신 카메라 앵글을 극단적으로 활용하거나 원단 표면을 현미경처럼 포착해 시각적 밀도를 확보하면 됩니다."
+      },
+      frenchRomantic: {
+        name: "프렌치 낭만형",
+        subtitle: "자연광, 일상, 사랑스러움. \"내가 살고 싶은 하루\"를 파는 타입입니다. 🥐",
+        strength: "편안한 웨어러블 상품 위에 레이어링된 서정적인 소품 연출과 따스한 라이프스타일 무드. 단순히 옷을 보여주는 것을 넘어 이 옷을 입고 누리는 아름다운 하루의 공기감을 판매하여 강력한 라이프스타일 동경을 만듭니다.",
+        risk: "내추럴 지대의 특성상 비주얼 진입 장벽이 낮아 카피캣 브랜드들이 쉽게 진입하며, 차별화된 비주얼 장치가 없으면 결국 기획전 단가 싸움으로 흘러가게 됩니다.",
+        prescription: "공간의 자연스러움은 가져가되 장소 1개와 시간대 1개를 고정해 브랜드 고유의 공기를 만드세요. 빛이 가장 예쁘게 갈라지는 시각을 집요하게 통제하면 타 브랜드가 따라 할 수 없는 독점적인 색감 아우라를 확보할 수 있습니다."
+      },
+      honestPractical: {
+        name: "데일리 스타일링형",
+        subtitle: "옷이 정확히 보이고 믿음이 쌓이는 타입. 전환을 가장 잘 만드는 브랜드입니다. 📦",
+        strength: "확실한 실용성을 바탕으로 한 웰메이드 단품과 정보가 투명하게 보이는 신뢰도 높은 클린 비주얼. 대중이 즉각적으로 코디를 복사해서 입고 싶게 만드는 리얼 라이프 스타일링 가이드를 가장 직관적으로 제시합니다.",
+        risk: "옷의 정보 전달과 웨어러블함에만 치중한 나머지 브랜드 고유의 페르소나나 묘한 서사가 느껴지지 않아 로열티 높은 팬덤을 묶어두기 어렵습니다.",
+        prescription: "메인 상세페이지의 정직한 카탈로그 결은 그대로 두되, 무드의 숨통을 틔워줄 감성적인 로케이션 비주얼 에이컷 3장을 피드 상단에 배치하세요. 브랜드 얼굴이 되는 무드 컷 3장만으로도 가격 방어가 시작됩니다."
+      },
+      trendsetter: {
+        name: "트렌드세터형",
+        subtitle: "빠르고 짜릿한 타입. 드랍과 실루엣 변화로 시장의 온도를 바로 잡아먹습니다. ⚡",
+        strength: "시장의 기류를 단숨에 포착해내는 압도적이고 신선한 디자인 스펙트럼과 명확한 디테일 전개. 남들보다 한 발 빠른 드랍 시스템과 감각적인 감도로 마켓의 트렌디한 활력을 주도합니다.",
+        risk: "매 시즌 자극적인 실루엣과 트렌드 키워드를 좇다 보면 브랜드의 코어 자아가 휘청이고, 유저들이 브랜드를 반짝 유행하는 소모재로 인식할 위험이 있습니다.",
+        prescription: "신상품의 릴리즈 속도는 유지하되, 브랜드의 중심을 잡아줄 고정 로고 레이아웃이나 시그니처 그래픽 톤을 세워 시각적 연속성을 부여하세요. 매 시즌 바뀌는 옷 사이에 절대 안 바뀌는 얼굴 하나를 심는 것이 핵심입니다."
+      }
+    };
+
+    // ─── resultMap ─────────────────────────────────────────────────
+    const resultMap = {
+      "+++": "artist",
+      "+-+": "fandom",
+      "-+-": "analog",
+      "++-": "oneTwist",
+      "---": "quietMinimal",
+      "-++": "frenchRomantic",
+      "--+": "honestPractical",
+      "+--": "trendsetter"
+    };
+
+    // ─── partInfo ──────────────────────────────────────────────────
+    const partInfo = {
+      1: { title:"상품기획", desc:"브랜드가 무엇을 만들고 어떤 상품으로 기억되고 싶은지 확인합니다." },
+      2: { title:"톤앤매너 감도", desc:"이제 당신의 브랜드가 어떻게 보여지고 싶은지 확인합니다." },
+      3: { title:"스타일링 강도", desc:"마지막으로 룩을 완성하는 디렉팅의 밀도를 확인합니다." }
+    };
+
+    const analysisSteps = [
+      "상품기획 성향을 정리하는 중",
+      "사진 감도와 톤앤매너를 읽는 중",
+      "스타일링 디렉팅 강도를 분석하는 중",
+      "브랜드 유형 결과를 완성하는 중"
+    ];
+
+    const choiceValues = [-10, -5, 0, 5, 10];
+
+    // ─── 상태 ──────────────────────────────────────────────────────
+    let currentIndex = 0;
+    let answers = {};
+    let currentScores = { x:0, y:0, s:0 };
+    let currentResult = null;
+    let isAdvancing = false;
+    let feedbackText = "";
+    let analysisFrameId = null;
+
+    // ─── DOM ───────────────────────────────────────────────────────
+    const $ = (sel) => document.querySelector(sel);
+    const introScreen    = $("#introScreen");
+    const questionScreen = $("#questionScreen");
+    const partTransition = $("#partTransition");
+    const analysisScreen = $("#analysisScreen");
+    const resultScreen   = $("#resultScreen");
+    const questionCard   = $("#questionCard");
+    const dotGroup       = $("#dotGroup");
+
+    // ─── 유틸 ──────────────────────────────────────────────────────
+    function resetScrollPosition() {
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      window.scrollTo(0, 0);
+      window.requestAnimationFrame(() => {
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+        window.scrollTo(0, 0);
+      });
+    }
+
+    function setScreen(activeScreen) {
+      [introScreen, questionScreen, partTransition, analysisScreen, resultScreen].forEach((s) => {
+        s.classList.toggle("is-active", s === activeScreen);
+      });
+      resetScrollPosition();
+    }
+
+    // ─── 점수 계산 ─────────────────────────────────────────────────
+    function calculateAxisScore(axis) {
+      const axisQs = questions.filter(q => q.axis === axis);
+      const weightedSum = axisQs.reduce((sum, q) => sum + (answers[q.id] ?? 0) * q.weight, 0);
+      const totalWeight = axisQs.reduce((sum, q) => sum + q.weight, 0);
+      return Math.round((weightedSum / totalWeight) * 10);
+    }
+
+    function getDirection(value) {
+      return value >= 0 ? "+" : "-";
+    }
+
+    function getResultKey(x, y, s) {
+      return `${getDirection(x)}${getDirection(y)}${getDirection(s)}`;
+    }
+
+    // ±120 범위 기준 퍼센트 변환
+    function scoreToPercent(score) {
+      return ((score + 120) / 240) * 100;
+    }
+
+    // S축 Sfinal (0~100)
+    function getSfinal(sRaw) {
+      return ((sRaw + 120) / 240) * 100;
+    }
+
+    // S축 원 크기 (16px ~ 64px)
+    function getDotSize(sfinal) {
+      return 16 + (sfinal * 0.48);
+    }
+
+    // ─── 축 설명 ───────────────────────────────────────────────────
+    function getXDescription(x) {
+      return x > 0
+        ? "당신의 브랜드는 독창적인 디자인 캐릭터와 쉽게 찾기 어려운 실루엣 기획에 무게중심을 두고 있습니다."
+        : "당신의 브랜드는 매일 입어도 질리지 않는 기본기와 친숙하고 안전한 데일리 실루엣에 집중하고 있습니다.";
+    }
+
+    function getYDescription(y) {
+      return y > 0
+        ? "당신의 브랜드 비주얼은 과감한 구도와 빛의 변주를 활용하여 묘한 서사와 독보적인 세계관 분위기를 보여줍니다."
+        : "당신의 브랜드 비주얼은 핏과 색감을 왜곡 없이 투명하게 노출하여 정보 중심의 상업적 신뢰를 견고하게 만듭니다.";
+    }
+
+    function getSDescription(s) {
+      return s > 0
+        ? "당신의 브랜드 착장은 풍부한 소품 레이어링과 적극적인 실루엣 변형을 통해 강력한 비주얼 밀도의 토탈 룩을 제안합니다."
+        : "당신의 브랜드 착장은 불필요한 장식을 배제하고 의상 본연의 핏감을 정갈하게 드러내는 절제형 스타일입니다.";
+    }
+
+    // ─── 브랜드 이름 마스킹 (앞 2글자 + ●) ─────────────────────────
+    function maskBrandName(name) {
+      const isKorean = /[가-힣]/.test(name);
+      const visibleCount = isKorean ? 1 : 2;
+      if (name.length <= visibleCount) return name + "●";
+      const visible = name.slice(0, visibleCount);
+      const hidden = "●".repeat(name.length - visibleCount);
+      return visible + hidden;
+    }
+
+    // ─── 싱크로율 계산 ─────────────────────────────────────────────
+    function calcSync(userX, userY, userS, brand) {
+      const maxDist = Math.sqrt(200 ** 2 + 200 ** 2 + 200 ** 2);
+      const dist = Math.sqrt(
+        (userX - brand.x) ** 2 +
+        (userY - brand.y) ** 2 +
+        (userS - brand.s) ** 2
+      );
+      return Math.round((1 - dist / maxDist) * 100);
+    }
+
+    function getTop3Brands(x, y, s) {
+      // S축은 브랜드맵 기준과 맞추기 위해 scoreToPercent로 0~100 변환 후 비교
+      const sfinal = getSfinal(s);
+      // 브랜드맵 s값도 0~100 기준이므로 유저 sfinal과 직접 비교
+      return brandMap
+        .map(b => ({ ...b, sync: calcSync(x, y, sfinal, { x: b.x, y: b.y, s: b.s }) }))
+        .sort((a, b) => b.sync - a.sync)
+        .slice(0, 3);
+    }
+
+    // ─── 마켓 포지션 렌더 ──────────────────────────────────────────
+    function renderMarketPosition(x, y, s) {
+      const top3 = getTop3Brands(x, y, s);
+      const list = $("#marketList");
+      list.innerHTML = "";
+      const ranks = ["01", "02", "03"];
+      top3.forEach((brand, i) => {
+        const item = document.createElement("div");
+        item.className = "market-item";
+        item.innerHTML = `
+          <span class="market-rank">${ranks[i]}</span>
+          <span class="market-name">${maskBrandName(brand.name)}</span>
+          <div class="market-sync">
+            <div class="market-sync-num">${brand.sync}<span style="font-size:0.5em">%</span></div>
+            <div class="market-sync-label">SYNC</div>
+          </div>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    // ─── 파트 전환 ─────────────────────────────────────────────────
+    function showPartTransition(part, callback) {
+      const info = partInfo[part];
+      $("#partKicker").textContent = `PART ${part}`;
+      $("#partTitle").textContent = info.title;
+      $("#partDesc").textContent = info.desc;
+      setScreen(partTransition);
+      window.setTimeout(callback, 950);
+    }
+
+    // ─── 진단 시작 ─────────────────────────────────────────────────
+    function startDiagnosis() {
+      currentIndex = 0;
+      answers = {};
+      currentResult = null;
+      feedbackText = "";
+      isAdvancing = false;
+      resetAnalysisScreen();
+      $("#leadForm").reset();
+      $("#formError").textContent = "";
+      $("#formPanel").style.display = "block";
+      $("#completeBox").classList.remove("is-active");
+      showPartTransition(1, () => {
+        renderQuestion();
+        setScreen(questionScreen);
+      });
+    }
+
+    // ─── 질문 렌더 ─────────────────────────────────────────────────
+    function renderQuestion() {
+      const q = questions[currentIndex];
+      const count = String(currentIndex + 1).padStart(2, "0");
+      $("#partLabel").textContent = `PART ${q.part} / ${partInfo[q.part].title}`;
+      $("#countLabel").textContent = `${count} / ${questions.length}`;
+      $("#progressBar").style.width = `${((currentIndex + 1) / questions.length) * 100}%`;
+      $("#questionNumber").textContent = `Q${q.id}`;
+      $("#questionText").textContent = q.question;
+      $("#leftAnchor").textContent = q.left;
+      $("#rightAnchor").textContent = q.right;
+      $("#leftShortLabel").textContent = q.leftShort;
+      $("#rightShortLabel").textContent = q.rightShort;
+      $("#choiceFeedback").textContent = feedbackText ? `선택됨: ${feedbackText}` : "";
+      $("#choiceFeedback").classList.toggle("is-visible", Boolean(feedbackText));
+      $("#backBtn").disabled = currentIndex === 0;
+      resetScrollPosition();
+
+      dotGroup.innerHTML = "";
+      choiceValues.forEach((value) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "dot-btn";
+        button.setAttribute("role", "radio");
+        button.setAttribute("aria-label", getAriaLabel(q, value));
+        button.setAttribute("aria-checked", String(answers[q.id] === value));
+        if (answers[q.id] === value) button.classList.add("is-selected");
+        button.addEventListener("click", () => selectAnswer(q, value));
+        dotGroup.appendChild(button);
+      });
+
+      questionCard.classList.remove("is-changing");
+    }
+
+    function getAriaLabel(question, value) {
+      if (value === -10) return `${question.leftShort}에 매우 가까움`;
+      if (value === -5)  return `${question.leftShort}에 조금 더 가까움`;
+      if (value === 0)   return "중간";
+      if (value === 5)   return `${question.rightShort}에 조금 더 가까움`;
+      if (value === 10)  return `${question.rightShort}에 매우 가까움`;
+      return "답변 선택";
+    }
+
+    function getChoiceFeedback(question, value) {
+      if (value === -10) return `${question.leftShort}에 매우 가깝습니다.`;
+      if (value === -5)  return `${question.leftShort}에 조금 더 가깝습니다.`;
+      if (value === 0)   return "두 가치의 균형에 가깝습니다.";
+      if (value === 5)   return `${question.rightShort}에 조금 더 가깝습니다.`;
+      if (value === 10)  return `${question.rightShort}에 매우 가깝습니다.`;
+      return "";
+    }
+
+    function showChoiceFeedback(text) {
+      const feedback = $("#choiceFeedback");
+      feedback.textContent = text ? `선택됨: ${text}` : "";
+      feedback.classList.toggle("is-visible", Boolean(text));
+    }
+
+    // ─── 답변 선택 ─────────────────────────────────────────────────
+    function selectAnswer(question, value) {
+      if (isAdvancing) return;
+      isAdvancing = true;
+      answers[question.id] = value;
+      feedbackText = getChoiceFeedback(question, value);
+
+      [...dotGroup.children].forEach((button, index) => {
+        const selected = choiceValues[index] === value;
+        button.classList.toggle("is-selected", selected);
+        button.setAttribute("aria-checked", String(selected));
+      });
+      showChoiceFeedback(feedbackText);
+
+      window.setTimeout(() => {
+        const nextIndex = currentIndex + 1;
+        if (nextIndex >= questions.length) {
+          feedbackText = "";
+          showAnalysis();
+          return;
+        }
+        const nextQuestion = questions[nextIndex];
+        const partChanged = nextQuestion.part !== question.part;
+        currentIndex = nextIndex;
+        feedbackText = "";
+        questionCard.classList.add("is-changing");
+
+        if (partChanged) {
+          showPartTransition(nextQuestion.part, () => {
+            renderQuestion();
+            setScreen(questionScreen);
+            isAdvancing = false;
+          });
+        } else {
+          window.setTimeout(() => {
+            renderQuestion();
+            isAdvancing = false;
+          }, 110);
+        }
+      }, 350);
+    }
+
+    function goBack() {
+      if (currentIndex === 0 || isAdvancing) return;
+      currentIndex -= 1;
+      feedbackText = "";
+      questionCard.classList.add("is-changing");
+      window.setTimeout(renderQuestion, 120);
+    }
+
+    // ─── 분석 로딩 ─────────────────────────────────────────────────
+    function resetAnalysisScreen() {
+      if (analysisFrameId) { window.cancelAnimationFrame(analysisFrameId); analysisFrameId = null; }
+      $("#analysisStepText").textContent = analysisSteps[0];
+      $("#analysisBarFill").style.width = "0%";
+    }
+
+    function showAnalysis() {
+      resetAnalysisScreen();
+      setScreen(analysisScreen);
+      const duration = 5000;
+      let start = null;
+
+      function animate(timestamp) {
+        if (!start) start = timestamp;
+        const elapsed = timestamp - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const percent = Math.round(progress * 100);
+        const stepIndex = Math.min(Math.floor(progress * analysisSteps.length), analysisSteps.length - 1);
+
+        $("#analysisBarFill").style.width = `${percent}%`;
+        $("#analysisStepText").textContent = analysisSteps[stepIndex];
+
+        if (progress < 1) {
+          analysisFrameId = window.requestAnimationFrame(animate);
+        } else {
+          analysisFrameId = null;
+          window.setTimeout(() => { showResults(); isAdvancing = false; }, 250);
+        }
+      }
+      analysisFrameId = window.requestAnimationFrame(animate);
+    }
+
+    // ─── 결과 표시 ─────────────────────────────────────────────────
+    function showResults() {
+      const x = calculateAxisScore("X");
+      const y = calculateAxisScore("Y");
+      const s = calculateAxisScore("S");
+      const resultKey = getResultKey(x, y, s);
+      currentScores = { x, y, s };
+
+      const isDeadCenter = x === 0 && y === 0 && s === 0;
+      currentResult = isDeadCenter
+        ? results["oneTwist"]
+        : results[resultMap[resultKey]] ?? results["oneTwist"];
+
+      // 유형 결과
+      $("#resultName").textContent = currentResult.name;
+      $("#resultSubtitle").textContent = currentResult.subtitle;
+      $("#strengthText").textContent = currentResult.strength;
+      $("#riskText").textContent = currentResult.risk;
+      $("#prescriptionText").textContent = currentResult.prescription;
+
+      // 축 설명
+      $("#xDescription").textContent = getXDescription(x);
+      $("#yDescription").textContent = getYDescription(y);
+      $("#sDescription").textContent = getSDescription(s);
+
+      // 마켓 포지션 Top3
+      renderMarketPosition(x, y, s);
+
+      // localStorage 저장
+      localStorage.setItem("zerotypeLastResult", JSON.stringify({
+        resultType: currentResult.name,
+        resultKey,
+        x, y, s,
+        answers,
+        shareText: `나의 ZEROTYPE은 ${currentResult.name}: ${currentResult.subtitle}`,
+        createdAt: new Date().toISOString()
+      }));
+
+      setScreen(resultScreen);
+
+      // 축 dot 위치 + S축 원 크기 애니메이션
+      window.setTimeout(() => {
+        $("#xDot").style.left = `${scoreToPercent(x)}%`;
+        $("#yDot").style.left = `${scoreToPercent(y)}%`;
+
+        const sfinal = getSfinal(s);
+        const dotSize = getDotSize(sfinal);
+        const sDot = $("#sDot");
+        sDot.style.left  = `${scoreToPercent(s)}%`;
+        sDot.style.width  = `${dotSize}px`;
+        sDot.style.height = `${dotSize}px`;
+      }, 180);
+    }
+
+    // ─── 폼 처리 ───────────────────────────────────────────────────
+    function handleSubmitLead(formData) {
+      const payload = {
+        ...formData,
+        resultType: currentResult.name,
+        x: currentScores.x,
+        y: currentScores.y,
+        s: currentScores.s,
+        answers,
+        createdAt: new Date().toISOString()
+      };
+      // TODO: 실제 서버 엔드포인트 연결
+      // await fetch("YOUR_ENDPOINT_URL", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload) });
+      console.log("ZEROTYPE LEAD", payload);
+      localStorage.setItem("zerotypeLead", JSON.stringify(payload));
+      showSubmitComplete();
+    }
+
+    function showSubmitComplete() {
+      $("#formPanel").style.display = "none";
+      const completeBox = $("#completeBox");
+      completeBox.classList.add("is-active");
+      completeBox.focus();
+    }
+
+    function validateLeadForm(form) {
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+      const requiredFields = ["brandName", "applicantName", "contact", "instagram"];
+      const hasEmptyRequired = requiredFields.some(f => !String(data[f] || "").trim());
+      if (hasEmptyRequired) {
+        return { valid:false, data, message:"브랜드명, 신청자명, 연락처, 인스타그램 계정 주소를 입력해주세요." };
+      }
+      return { valid:true, data, message:"" };
+    }
+
+    // ─── 이벤트 바인딩 ─────────────────────────────────────────────
+    $("#startBtn").addEventListener("click", startDiagnosis);
+    $("#backBtn").addEventListener("click", goBack);
+    $("#restartBtn").addEventListener("click", startDiagnosis);
+    $("#leadForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const { valid, data, message } = validateLeadForm(event.currentTarget);
+      $("#formError").textContent = message;
+      if (!valid) return;
+      handleSubmitLead(data);
+    });
+  </script>
+</body>
+</html>
