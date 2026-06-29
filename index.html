@@ -191,7 +191,7 @@
       .question-meta { align-items: flex-start; flex-direction: column; }
       .anchors { grid-template-columns: 1fr; gap: 12px; }
       .anchor { min-height: auto; font-size: 17px; }
-      .anchor.right { text-align: left; }
+      .anchor.right { text-align: right; }
       .anchor-vs { display: block; }
       .dots { gap: 4px; }
       .dot-btn { height: 52px; }
@@ -1042,7 +1042,7 @@
     }
 
     // ─── 폼 처리 ───────────────────────────────────────────────────
-    function handleSubmitLead(formData) {
+    async function handleSubmitLead(formData) {
       const payload = {
         ...formData,
         resultType: currentResult.name,
@@ -1052,9 +1052,20 @@
         answers,
         createdAt: new Date().toISOString()
       };
-      // TODO: 실제 서버 엔드포인트 연결
-      // await fetch("YOUR_ENDPOINT_URL", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload) });
-      console.log("ZEROTYPE LEAD", payload);
+
+      const ENDPOINT = "https://script.google.com/macros/s/AKfycbzP2MUKbh0haIw3cYMubJoqJTO3isr4bAGO_MiEiWHhJ3V6vB7T0RI8jT2IFyS1nHzo1w/exec";
+
+      try {
+        await fetch(ENDPOINT, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+      } catch (error) {
+        console.error("전송 실패", error);
+      }
+
       localStorage.setItem("zerotypeLead", JSON.stringify(payload));
       showSubmitComplete();
     }
