@@ -1047,9 +1047,9 @@
       const payload = {
         ...formData,
         resultType: currentResult.name,
-        x: currentScores.x,
-        y: currentScores.y,
-        s: currentScores.s,
+        x: Math.round(scoreToPercent(currentScores.x)),
+        y: Math.round(scoreToPercent(currentScores.y)),
+        s: Math.round(getSfinal(currentScores.s)),
         answers,
         createdAt: new Date().toISOString()
       };
