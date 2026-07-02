@@ -51,6 +51,7 @@
 
     /* INTRO */
     .intro { display: flex; align-items: center; min-height: 100vh; padding: 44px 0; }
+    .intro .wrap { padding-left: clamp(20px, 5vw, 60px); padding-right: clamp(20px, 5vw, 60px); }
     .intro-inner { width: 100%; display: grid; gap: clamp(54px, 9vw, 108px); }
     .brand-mark { font-size: 13px; font-weight: 800; letter-spacing: 0.18em; }
     .intro-copy { max-width: 840px; }
@@ -137,9 +138,9 @@
     .section-title { margin-top: 16px; max-width: 760px; font-size: clamp(38px, 7vw, 82px); line-height: 1.04; font-weight: 900; word-break: keep-all; }
 
     /* AXIS */
-    .axis-list { margin-top: clamp(38px, 6vw, 64px); display: grid; gap: 34px; }
-    .axis-item { display: grid; grid-template-columns: minmax(170px, 240px) 1fr; gap: clamp(20px, 5vw, 70px); align-items: start; border-top: 1px solid var(--black); padding-top: 22px; }
-    .axis-copy { display: grid; gap: 20px; }
+    .axis-list { margin-top: clamp(38px, 6vw, 64px); display: grid; gap: 20px; }
+    .axis-item { display: grid; grid-template-columns: minmax(170px, 240px) 1fr; gap: clamp(20px, 5vw, 70px); align-items: start; border-top: 1px solid var(--black); padding-top: 16px; }
+    .axis-copy { display: grid; gap: 12px; }
     .axis-copy p { max-width: 760px; color: var(--text); font-size: clamp(17px, 2vw, 24px); line-height: 1.65; word-break: keep-all; }
     .axis-bar { display: grid; gap: 10px; }
     .axis-track { position: relative; height: 32px; }
@@ -215,11 +216,11 @@
       <div class="wrap intro-inner">
         <div class="brand-mark">ZEROBLACK®</div>
         <div class="intro-copy">
-          <h1 id="introTitle" class="intro-title">당신의 브랜드는 어디에 있습니까?</h1>
-          <p class="intro-sub">30개의 선택으로 상품기획, 사진 감도, 스타일링 성향을 분석합니다.<br>브랜드가 기억되는 방식과 다음 시즌의 방향을 확인해보세요.</p>
+          <h1 id="introTitle" class="intro-title">내 브랜드 성격 테스트</h1>
+          <p class="intro-sub">MBTI 테스트 하듯 가벼운 마음으로,<br>상품기획 · 사진 감도 · 스타일링 성향<br>3가지 기준으로 브랜드를 분석합니다.</p>
         </div>
         <div class="intro-actions">
-          <button id="startBtn" class="primary-btn" type="button">브랜드 타입 진단 시작하기 →</button>
+          <button id="startBtn" class="primary-btn" type="button">테스트 시작하기 →</button>
           <p class="note">약 3분 · 가입 없이 바로 확인</p>
         </div>
       </div>
@@ -289,38 +290,14 @@
     <!-- RESULTS -->
     <section id="resultScreen" class="screen results" aria-live="polite">
 
-      <!-- 섹션 01: 유형 결과 -->
-      <section class="result-section" aria-labelledby="resultName">
-        <div class="wrap">
-          <p class="eyebrow">YOUR ZEROTYPE / ANALYSIS COMPLETE</p>
-          <h2 id="resultName" class="result-name"></h2>
-          <p id="resultSubtitle" class="result-subtitle"></p>
-          <div class="insight-grid">
-            <article class="insight-card">
-              <h3>STRENGTH</h3>
-              <p id="strengthText"></p>
-            </article>
-            <article class="insight-card">
-              <h3>RISK</h3>
-              <p id="riskText"></p>
-            </article>
-            <article class="insight-card">
-              <h3>ZEROBLACK PRESCRIPTION</h3>
-              <p id="prescriptionText"></p>
-            </article>
-          </div>
-          <p class="scroll-note">스크롤을 내려 3대 비주얼 지표를 확인하세요 ↓</p>
-        </div>
-      </section>
-
-      <!-- 섹션 02: 3대 비주얼 지표 -->
+      <!-- 섹션 01: 3대 비주얼 지표 -->
       <section class="result-section" aria-labelledby="axisTitle">
         <div class="wrap">
-          <p class="eyebrow">02 — 3대 비주얼 지표</p>
-          <h2 id="axisTitle" class="section-title">3대 비주얼 지표 지향점 분석</h2>
+          <p class="eyebrow">01 — 3대 비주얼 지표</p>
+          <h2 id="axisTitle" class="section-title" style="font-size:clamp(42px,7vw,88px); font-weight:900;">나의 브랜드 지향점 분석</h2>
           <div class="axis-list">
             <article class="axis-item">
-              <h3>상품기획 성향</h3>
+              <h3 style="font-size:clamp(18px,2vw,24px); font-weight:860;">상품기획 성향</h3>
               <div class="axis-copy">
                 <p id="xDescription"></p>
                 <div class="axis-bar">
@@ -330,7 +307,7 @@
               </div>
             </article>
             <article class="axis-item">
-              <h3>톤앤매너 감도</h3>
+              <h3 style="font-size:clamp(18px,2vw,24px); font-weight:860;">톤앤매너 감도</h3>
               <div class="axis-copy">
                 <p id="yDescription"></p>
                 <div class="axis-bar">
@@ -340,7 +317,7 @@
               </div>
             </article>
             <article class="axis-item">
-              <h3>스타일링 디렉팅 강도</h3>
+              <h3 style="font-size:clamp(18px,2vw,24px); font-weight:860;">스타일링 강도</h3>
               <div class="axis-copy">
                 <p id="sDescription"></p>
                 <div class="axis-bar">
@@ -353,14 +330,38 @@
         </div>
       </section>
 
-      <!-- 섹션 03: 마켓 포지션 매치 -->
+      <!-- 섹션 02: 마켓 포지션 매치 -->
       <section class="result-section" aria-labelledby="marketTitle">
         <div class="wrap">
-          <p class="eyebrow">03 — MARKET POSITION MATCH</p>
-          <h2 id="marketTitle" class="section-title">당신의 브랜드와 가장 가까운 마켓 포지션 Top 3</h2>
+          <p class="eyebrow">02 — 마켓 포지션 매치</p>
+          <h2 id="marketTitle" class="section-title" style="font-size:clamp(42px,7vw,88px); font-weight:900;">당신의 브랜드와 가장 가까운 마켓 포지션 Top 3</h2>
           <p style="margin-top:16px; color:var(--subtext); font-size:clamp(16px,1.8vw,20px); line-height:1.7; word-break:keep-all;">제로블랙 브랜드 맵 분석 결과, 현재 비주얼 흐름이 가장 유사한 매칭 군입니다.</p>
           <div id="marketList" class="market-list"></div>
           <p class="market-note">브랜드명과 상세 포지션 분석은 오프라인 브랜드 비주얼 진단에서 공개됩니다.</p>
+        </div>
+      </section>
+
+      <!-- 섹션 03: 유형 분석 -->
+      <section class="result-section" aria-labelledby="resultName">
+        <div class="wrap">
+          <p class="eyebrow">03 — 유형 분석</p>
+          <h2 id="resultName" class="result-name"></h2>
+          <p id="resultSubtitle" class="result-subtitle"></p>
+          <div class="insight-grid">
+            <article class="insight-card">
+              <h3 style="font-size:15px; font-weight:900; letter-spacing:0.12em;">강점</h3>
+              <p id="strengthText"></p>
+            </article>
+            <article class="insight-card">
+              <h3 style="font-size:15px; font-weight:900; letter-spacing:0.12em;">약점</h3>
+              <p id="riskText"></p>
+            </article>
+            <article class="insight-card">
+              <h3 style="font-size:15px; font-weight:900; letter-spacing:0.12em;">제로블랙 처방전</h3>
+              <p id="prescriptionText"></p>
+            </article>
+          </div>
+          <p class="scroll-note">스크롤을 내려 브랜드 해석실로 이동하세요 ↓</p>
         </div>
       </section>
 
@@ -368,30 +369,35 @@
       <section class="result-section" aria-labelledby="inviteTitle">
         <div class="wrap invite-layout">
           <div>
-            <p class="eyebrow">04 — 브랜드 해석실</p>
-            <h2 id="inviteTitle" class="section-title">진단은 끝났습니다. 이제 해석이 남았습니다.</h2>
+            <p class="eyebrow" style="font-size:15px; letter-spacing:0.16em;">04 — 브랜드 해석실</p>
+            <h2 id="inviteTitle" class="section-title">소비자가 바라보는<br>내 브랜드도 같을까요?</h2>
             <div class="invite-copy">
               <div class="invite-block">
-                <p>결과를 확인했다는 것은 이미 자기 브랜드를 깊이 들여다보는 디렉터라는 뜻입니다. 그 애정과 고민이 브랜드를 다음 단계로 움직이게 하는 가장 강력한 동력입니다.</p>
+                <p class="invite-label" style="font-size:15px; font-weight:860; letter-spacing:0.12em;">04-1 내가 선택한 브랜드 성격</p>
+                <p>방금 확인한 유형은 디렉터 본인이 브랜드를 어떻게 바라보는지를 보여줍니다. 상품을 기획하고, 사진을 고르고, 스타일링을 결정하는 순간마다 쌓아온 감각과 방향의 총합입니다.</p>
               </div>
               <div class="invite-block">
-                <p class="invite-label">01 BACKGROUND</p>
-                <p>제로블랙은 수많은 브랜드의 룩북을 함께 만들어오며 하나의 패턴을 발견했습니다. 꾸준히 성장하는 브랜드는 비주얼을 결정하는 방식이 달랐습니다. 예쁜 사진보다 먼저, 어떤 상품을 중심에 둘지, 어떤 이미지로 기억될지, 고객이 어떤 분위기에 반응하는지를 묻고 있었습니다. 방금 답하신 30개의 질문은 그 고민들을 바탕으로 정리한 브랜드 자가진단입니다.</p>
+                <p class="invite-label" style="font-size:15px; font-weight:860; letter-spacing:0.12em;">04-2 소비자가 보는 브랜드</p>
+                <p>하지만 내가 의도한 브랜드와 소비자가 실제로 느끼는 브랜드 사이에는 언제나 간극이 존재합니다.</p>
+                <p>상품기획은 좋았는데 잘 팔리지 않거나, 멋지게 찍었는데 기대만큼 반응이 없다면 그 간극이 벌어지고 있다는 신호일 수 있습니다.</p>
               </div>
               <div class="invite-block">
-                <p class="invite-label">02 THE GAP</p>
-                <p>"열심히 찍었는데, 왜 우리 옷은 생각만큼 팔리지 않을까?"</p>
-                <p>이 질문이 떠오른다면, 브랜드의 자아와 시장의 반응 사이 어딘가에 작은 병목이 생긴 것일 수 있습니다. 자가진단 결과와 유형은 방향을 보여주지만, 브랜드의 모든 맥락을 설명하지는 못합니다. 이제 필요한 것은 점수가 아니라 해석입니다.</p>
+                <p class="invite-label" style="font-size:15px; font-weight:860; letter-spacing:0.12em;">04-3 간극을 좁히는 일</p>
+                <p>제로블랙이 하는 일은 바로 그 간극을 찾아내고 함께 좁히는 것입니다.</p>
+                <p>브랜드의 룩북, 인스타그램 피드, 상품 구성을 먼저 검토합니다. 그리고 변화를 준비한 브랜드에 한해 1시간 오프라인 브랜드 비주얼 진단을 안내드립니다.</p>
               </div>
               <div class="invite-block">
-                <p class="invite-label">03 ZEROTYPE WORKSHOP</p>
-                <p>신청 브랜드의 룩북, 인스타그램 피드, 상품 구성을 먼저 검토합니다. 그리고 변화를 준비한 브랜드에 한해 제로블랙이 진행하는 1시간 오프라인 브랜드 비주얼 진단을 안내드립니다. 다음 시즌의 전략적 방향, 브랜드가 시장에서 더 선명하게 기억되고 상품이 더 정확하게 선택받기 위한 비주얼 전략을 함께 찾아갑니다.</p>
+                <p class="invite-label" style="font-size:15px; font-weight:860; letter-spacing:0.12em;">04-4 신생 브랜드라면</p>
+                <p>아직 보여줄 룩북이나 피드가 없어도 괜찮습니다. 신생 브랜드라면 상품 기획 방향, 첫 룩북의 톤앤매너, 스타일링의 강도, 시장에 처음 기억될 포지션을 함께 정리합니다.</p>
+              </div>
+              <div class="invite-block">
+                <p style="font-size:clamp(16px,1.8vw,20px); font-weight:760; line-height:1.7; word-break:keep-all;">제로블랙 브랜드 맵 리포트로 더 상세한 분석 결과를 받아보세요.</p>
               </div>
             </div>
           </div>
           <aside>
             <div id="formPanel" class="form-panel">
-              <h3 class="form-title">내 브랜드 해석 신청하기</h3>
+              <h3 class="form-title">브랜드 맵 리포트 신청하기</h3>
               <form id="leadForm" class="lead-form" novalidate>
                 <div class="field">
                   <label for="brandName">브랜드명</label>
@@ -424,7 +430,7 @@
                 <p class="form-help">신청 내용을 검토한 뒤, 비주얼 진단이 의미 있는 브랜드에 한해 개별 연락드립니다.<br>제출 시 오프라인 진단 안내를 위한 개인정보 수집에 동의한 것으로 간주합니다.</p>
                 <p id="formError" class="form-error" role="alert"></p>
                 <div class="form-actions">
-                  <button class="primary-btn" type="submit">내 브랜드 해석 신청하기</button>
+                  <button class="primary-btn" type="submit">제로블랙 브랜드 맵 리포트 신청하기</button>
                   <button id="restartBtn" class="secondary-btn" type="button">진단 다시하기</button>
                 </div>
               </form>
@@ -476,8 +482,8 @@
       { id:26, part:3, axis:"S", weight:1, question:"모델을 카메라 앞에 세우기 직전, 내 마지막 손길은 어느 쪽입니까?", left:"소품을 빼고 옷 본연의 핏과 실루엣만 정돈한다", right:"모자, 가방, 선글라스 등 소품을 겹겹이 매칭한다", leftShort:"실루엣 정돈", rightShort:"소품 레이어" },
       { id:27, part:3, axis:"S", weight:1, question:"현장에서 모니터를 볼 때 시선이 먼저 가는 곳은?", left:"메인 아이템의 핏과 잔주름 없는지 점검", right:"머리부터 발끝까지 전체 레이어드의 밸런스 체크", leftShort:"단품 핏", rightShort:"전체 룩" },
       { id:28, part:3, axis:"S", weight:1, question:"촬영 중 마음에 안 드는 컷이 나왔을 때 기준은?", left:"상품의 핏과 색감이 정확하게 보이면 통과", right:"무드와 아우라가 살아있지 않으면 다시 찍는다", leftShort:"정보 정확도", rightShort:"무드 완성도" },
-      { id:29, part:3, axis:"S", weight:1, question:"촬영 후 최종 컷을 고를 때 기준은?", left:"상품이 가장 잘 보이는 컷", right:"브랜드 무드가 가장 강한 컷", leftShort:"상품 중심", rightShort:"무드 중심" },
-      { id:30, part:3, axis:"S", weight:2, question:"룩북 공개 후 기획자로서 소름 돋는 반응은?", left:"\"내일 아침 이 스타일링 그대로 입고 싶어요\"", right:"\"이 조합 신선하다! 큰 영감을 받았어요\"", leftShort:"따라 입고 싶은 룩", rightShort:"신선한 조합" },
+      { id:29, part:3, axis:"S", weight:1, question:"스타일링 레퍼런스를 수집하는 방식은?", left:"편집몰과 플랫폼의 시즌 스타일링 트렌드를 중심으로 참고한다", right:"개성 있는 인플루언서, 해외 컬렉션 등 나만의 시각으로 직접 매칭한다", leftShort:"트렌드 참고", rightShort:"독자적 매칭" },
+      { id:30, part:3, axis:"S", weight:2, question:"룩북 공개 후 디렉터로서 기분 좋은 반응은?", left:"\"내일 아침 이 스타일링 그대로 입고 싶어요\"", right:"\"이 조합 신선하다! 큰 영감을 받았어요\"", leftShort:"따라 입고 싶은 룩", rightShort:"신선한 조합" },
     ];
 
     // ─── 브랜드맵 데이터 ───────────────────────────────────────────
@@ -1034,11 +1040,9 @@
         $("#yDot").style.left = `${scoreToPercent(y)}%`;
 
         const sfinal = getSfinal(s);
-        const dotSize = getDotSize(sfinal);
         const sDot = $("#sDot");
         sDot.style.left  = `${scoreToPercent(s)}%`;
-        sDot.style.width  = `${dotSize}px`;
-        sDot.style.height = `${dotSize}px`;
+        // S축 dot 크기 X,Y와 동일하게 고정 (18px)
       }, 180);
     }
 
