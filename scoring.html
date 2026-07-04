@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ZEROBLACK — 브랜드 스코어링</title>
+  <link rel="icon" href="data:,">
+  <style>
+    :root {
+      --bg: #f7f5f0;
+      --text: #111111;
+      --subtext: #666666;
+      --line: #d8d4cc;
+      --black: #111111;
+      --white: #ffffff;
+      --muted: #a39d91;
+      --accent: #2563eb;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Pretendard, "Noto Sans KR", "Apple SD Gothic Neo", -apple-system, sans-serif;
+    }
+    button, input { font: inherit; cursor: pointer; }
+
+    .wrap { width: min(100%, 860px); margin: 0 auto; padding: 0 clamp(24px, 5vw, 60px); }
+
+    /* INTRO */
+    .intro { min-height: 100vh; display: flex; align-items: center; padding: 60px 0; }
+    .intro-inner { width: 100%; }
+    .brand-mark { font-size: 12px; font-weight: 800; letter-spacing: 0.2em; color: var(--muted); margin-bottom: 48px; }
+    .intro-title { font-size: clamp(36px, 6vw, 72px); font-weight: 900; line-height: 1.1; margin: 0 0 12px; }
+    .intro-sub { color: var(--subtext); font-size: 17px; line-height: 1.7; margin: 0 0 40px; }
+    .brand-input-wrap { display: grid; gap: 10px; max-width: 480px; }
+    .brand-input-wrap label { font-size: 13px; font-weight: 800; letter-spacing: 0.1em; color: var(--subtext); }
+    .brand-input { width: 100%; min-height: 52px; border: 0; border-bottom: 2px solid var(--black); background: transparent; color: var(--text); font-size: 22px; font-weight: 760; padding: 0 4px; outline: none; }
+    .brand-input:focus { border-bottom-color: var(--accent); }
+    .start-btn { margin-top: 28px; min-height: 52px; padding: 0 28px; background: var(--black); color: var(--white); border: 0; font-size: 16px; font-weight: 800; letter-spacing: 0.06em; }
+    .start-btn:hover { opacity: 0.85; }
+
+    /* QUESTION */
+    .question-screen { display: none; min-height: 100vh; padding: clamp(24px, 4vh, 40px) 0; }
+    .question-screen.active { display: block; }
+    .q-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .q-brand { font-size: 13px; font-weight: 800; letter-spacing: 0.1em; color: var(--muted); }
+    .q-count { font-size: 13px; font-weight: 800; color: var(--subtext); }
+    .progress-track { height: 2px; background: var(--line); margin-bottom: clamp(28px, 5vh, 48px); }
+    .progress-bar { height: 100%; background: var(--black); transition: width 260ms ease; }
+    .q-number { font-size: 12px; font-weight: 800; letter-spacing: 0.14em; color: var(--muted); margin-bottom: 14px; }
+    .q-text { font-size: clamp(24px, 4vw, 42px); font-weight: 860; line-height: 1.2; word-break: keep-all; margin: 0 0 clamp(24px, 4vh, 40px); }
+    .anchors { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+    .anchor { font-size: clamp(15px, 1.8vw, 20px); font-weight: 720; line-height: 1.45; word-break: keep-all; border-top: 1px solid var(--black); padding-top: 14px; }
+    .anchor.right { text-align: right; }
+    .dots { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; align-items: center; margin-bottom: 12px; }
+    .dot-btn { height: 52px; border: 0; background: transparent; display: grid; place-items: center; }
+    .dot-btn::before { content: ""; width: 22px; height: 22px; border: 1.5px solid var(--black); border-radius: 999px; background: transparent; transition: background 140ms ease, transform 140ms ease; }
+    .dot-btn.selected::before { background: var(--black); transform: scale(1.22); }
+    .scale-labels { display: grid; grid-template-columns: 1fr 1fr 1fr; font-size: 13px; font-weight: 720; color: var(--subtext); }
+    .scale-labels span:nth-child(2) { text-align: center; }
+    .scale-labels span:last-child { text-align: right; }
+    .q-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--line); }
+    .back-btn { border: 0; background: transparent; font-size: 14px; font-weight: 760; text-decoration: underline; text-underline-offset: 4px; color: var(--subtext); }
+    .back-btn:disabled { opacity: 0.3; cursor: not-allowed; text-decoration: none; }
+    .q-note { font-size: 13px; color: var(--muted); }
+
+    /* COMPLETE */
+    .complete-screen { display: none; min-height: 100vh; align-items: center; padding: 60px 0; }
+    .complete-screen.active { display: flex; }
+    .complete-inner { width: 100%; }
+    .complete-title { font-size: clamp(36px, 6vw, 72px); font-weight: 900; line-height: 1.1; margin: 0 0 16px; }
+    .complete-sub { color: var(--subtext); font-size: 18px; line-height: 1.7; margin: 0 0 32px; }
+    .score-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 32px 0; }
+    .score-card { border: 1px solid var(--line); background: rgba(255,255,255,0.5); padding: 20px; }
+    .score-card h3 { font-size: 11px; font-weight: 800; letter-spacing: 0.14em; color: var(--muted); margin: 0 0 10px; }
+    .score-card .score-val { font-size: 48px; font-weight: 900; line-height: 1; }
+    .score-card .score-label { font-size: 13px; color: var(--subtext); margin-top: 6px; }
+    .result-type { font-size: 28px; font-weight: 900; margin: 0 0 8px; }
+    .action-btns { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 32px; }
+    .primary-btn { min-height: 48px; padding: 0 24px; background: var(--black); color: var(--white); border: 0; font-size: 15px; font-weight: 800; }
+    .secondary-btn { min-height: 48px; padding: 0 24px; background: transparent; color: var(--black); border: 1px solid var(--black); font-size: 15px; font-weight: 760; }
+    .save-status { margin-top: 16px; font-size: 14px; color: var(--subtext); min-height: 20px; }
+    .save-status.success { color: #16a34a; }
+    .save-status.error { color: #dc2626; }
+
+    @media (max-width: 640px) {
+      .anchors { grid-template-columns: 1fr; }
+      .anchor.right { text-align: left; }
+      .score-grid { grid-template-columns: 1fr; }
+      .action-btns { flex-direction: column; }
+      .primary-btn, .secondary-btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- INTRO -->
+  <section id="introScreen" class="intro">
+    <div class="wrap intro-inner">
+      <p class="brand-mark">ZEROBLACK® — 내부용 브랜드 스코어링 툴</p>
+      <h1 class="intro-title">브랜드 스코어링</h1>
+      <p class="intro-sub">분석할 브랜드 이름을 입력하고<br>30개 질문에 답하면 X/Y/S 점수가 자동 기록됩니다.</p>
+      <div class="brand-input-wrap">
+        <label for="brandNameInput">브랜드명</label>
+        <input id="brandNameInput" class="brand-input" type="text" placeholder="예: Amomento" autocomplete="off">
+      </div>
+      <button class="start-btn" id="startBtn">스코어링 시작하기 →</button>
+    </div>
+  </section>
+
+  <!-- QUESTION -->
+  <section id="questionScreen" class="question-screen">
+    <div class="wrap">
+      <div class="q-header">
+        <span id="qBrand" class="q-brand"></span>
+        <span id="qCount" class="q-count"></span>
+      </div>
+      <div class="progress-track">
+        <div id="progressBar" class="progress-bar" style="width:0%"></div>
+      </div>
+      <p id="qNumber" class="q-number"></p>
+      <h2 id="qText" class="q-text"></h2>
+      <div class="anchors">
+        <p id="leftAnchor" class="anchor"></p>
+        <p id="rightAnchor" class="anchor right"></p>
+      </div>
+      <div id="dotGroup" class="dots"></div>
+      <div class="scale-labels">
+        <span id="leftShort"></span>
+        <span>중간</span>
+        <span id="rightShort"></span>
+      </div>
+      <div class="q-footer">
+        <button id="backBtn" class="back-btn" disabled>← 이전</button>
+        <span class="q-note">선택하면 다음 문항으로 이동합니다.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPLETE -->
+  <section id="completeScreen" class="complete-screen">
+    <div class="wrap complete-inner">
+      <p class="brand-mark">ZEROBLACK® — 스코어링 완료</p>
+      <h2 id="completeBrand" class="complete-title"></h2>
+      <p class="complete-sub">30개 질문 분석이 완료되었습니다.</p>
+      <div class="score-grid">
+        <div class="score-card">
+          <h3>X축 — 상품기획</h3>
+          <div id="scoreX" class="score-val"></div>
+          <div class="score-label">-100 ~ +100</div>
+        </div>
+        <div class="score-card">
+          <h3>Y축 — 톤앤매너</h3>
+          <div id="scoreY" class="score-val"></div>
+          <div class="score-label">-100 ~ +100</div>
+        </div>
+        <div class="score-card">
+          <h3>S축 — 스타일링</h3>
+          <div id="scoreS" class="score-val"></div>
+          <div class="score-label">0 ~ 100</div>
+        </div>
+      </div>
+      <p id="resultType" class="result-type"></p>
+      <div class="action-btns">
+        <button id="saveBtn" class="primary-btn">구글 시트에 저장하기</button>
+        <button id="newBrandBtn" class="secondary-btn">다른 브랜드 스코어링</button>
+      </div>
+      <p id="saveStatus" class="save-status"></p>
+    </div>
+  </section>
+
+  <script>
+    const ENDPOINT = "https://script.google.com/macros/s/AKfycbwTAUSoYsNUYanQ-LJMTiiAOyg_TF5_VD6a9AF-I4uYLDvGENL_CFiy6qZC2IcpiaSqZQ/exec";
+
+    const questions = [
+      { id:1,  part:1, axis:"X", weight:2, question:"우리 브랜드의 메인 아이템은 어느 쪽에 가깝습니까?", left:"매일 입어도 질리지 않는 기본기", right:"국내에선 찾기 어려운 독창적인 디자인", leftShort:"기본기 중심", rightShort:"독창성 중심" },
+      { id:2,  part:1, axis:"X", weight:1, question:"브랜드의 가격대를 설정하는 기준은 어느 쪽입니까?", left:"더 많은 소비자가 접근할 수 있는 합리적인 가격대", right:"브랜드 가치와 희소성을 지키는 프리미엄 포지셔닝", leftShort:"합리적 가격대", rightShort:"프리미엄 포지셔닝" },
+      { id:3,  part:1, axis:"X", weight:1, question:"상품 기획을 시작할 때 가장 먼저 참고하는 기준은?", left:"주요 패션 플랫폼의 최근 동향 데이터", right:"해외 컬렉션과 독자적인 인스피레이션 아카이브", leftShort:"판매 데이터", rightShort:"영감 아카이브" },
+      { id:4,  part:1, axis:"X", weight:2, question:"디렉터로서 심장을 뛰게 만드는 고객 후기는?", left:"\"핏이 편해서 시즌 내내 매일 손이 가요\"", right:"\"입는 순간 나만의 캐릭터가 생겨요\"", leftShort:"편한 옷", rightShort:"캐릭터 있는 옷" },
+      { id:5,  part:1, axis:"X", weight:1, question:"시즌이 끝났을 때 가장 뼈아픈 실패는?", left:"안정적인 판매 볼륨을 확보하지 못한 것", right:"대중성 눈치 보느라 브랜드 자아를 타협한 것", leftShort:"판매 볼륨", rightShort:"브랜드 자아" },
+      { id:6,  part:1, axis:"X", weight:1, question:"신상품 컬러를 기획할 때 내 무게중심은 어느 쪽입니까?", left:"블랙, 네이비, 멜란지 등 무채색 위주의 안정감", right:"시즌 콘셉트를 단번에 시각화하는 선명한 포인트 컬러", leftShort:"안정 컬러", rightShort:"시즌 컬러" },
+      { id:7,  part:1, axis:"X", weight:1, question:"메인 원단을 고를 때 절대 양보할 수 없는 기준은?", left:"자주 세탁해도 수축이나 뒤틀림이 없는 내구성", right:"터치하거나 멀리서 봐도 바로 느껴지는 독특한 텍스쳐", leftShort:"내구성", rightShort:"텍스쳐" },
+      { id:8,  part:1, axis:"X", weight:1, question:"브랜드의 타깃 고객을 설정하는 방식은?", left:"연령대와 라이프스타일을 넓게 열어 많은 소비자를 포용한다", right:"취향과 가치관이 맞는 특정 고객을 좁고 깊게 겨냥한다", leftShort:"넓은 타깃", rightShort:"좁고 깊은 타깃" },
+      { id:9,  part:1, axis:"X", weight:1, question:"한 시즌에 출시하는 아이템 수는 어느 쪽에 가깝습니까?", left:"다양한 선택지를 위해 폭넓은 라인업을 구성한다", right:"핵심 아이템에 집중해 소수를 깊게 완성한다", leftShort:"폭넓은 라인업", rightShort:"소수 집중" },
+      { id:10, part:1, axis:"X", weight:1, question:"콜라보 파트너로 더 끌리는 인플루언서는?", left:"대중적인 인지도가 높고 친숙한 인플루언서", right:"자기 색깔이 독보적인 인플루언서", leftShort:"친숙한 얼굴", rightShort:"독보적 얼굴" },
+      { id:11, part:2, axis:"Y", weight:1, question:"비주얼 기획을 시작할 때 레퍼런스를 모으는 방식은?", left:"잘 팔리는 브랜드 룩북과 플랫폼 상위 노출 이미지 중심", right:"영화, 미술, 건축 등 패션 외 분야에서 영감을 끌어온다", leftShort:"시장 레퍼런스", rightShort:"크로스 레퍼런스" },
+      { id:12, part:2, axis:"Y", weight:1, question:"포토그래퍼를 선정하는 기준은 무엇입니까?", left:"상업적 신뢰도가 누적된 사진가", right:"고유의 시각적 세계관을 증명하는 사진가", leftShort:"상업적 신뢰", rightShort:"시각적 세계관" },
+      { id:13, part:2, axis:"Y", weight:2, question:"룩북 촬영 배경으로 선호하는 공간은?", left:"깔끔하고 담백해서 모델과 옷에 집중되는 공간", right:"다양한 소품과 시각적 재미가 있는 공간", leftShort:"담백한 공간", rightShort:"시각적 공간" },
+      { id:14, part:2, axis:"Y", weight:1, question:"룩북 속 모델의 시선과 표정 연출은 어느 쪽입니까?", left:"상업적 호감을 유발하는 내추럴 마스크", right:"단 한 장으로 묘한 서사를 만드는 얼굴", leftShort:"상업적 호감", rightShort:"묘한 서사" },
+      { id:15, part:2, axis:"Y", weight:1, question:"포토그래퍼에게 요청하는 라이팅 무드는?", left:"옷의 형태와 실물이 고르게 보이는 통일감 있는 빛", right:"역광, 강한 실루엣 등 컷마다 다채롭게 변주하는 빛", leftShort:"통일감 있는 빛", rightShort:"변주하는 빛" },
+      { id:16, part:2, axis:"Y", weight:2, question:"최종 사진에서 선호하는 톤 질감은?", left:"화이트밸런스가 정확한 클린 톤", right:"거친 필름 그레인과 색이 뒤섞인 영화적인 톤", leftShort:"클린 톤", rightShort:"영화적 톤" },
+      { id:17, part:2, axis:"Y", weight:1, question:"모니터링할 때 더 만족스러운 카메라 구도는?", left:"인물과 옷의 밸런스가 안정적인 아이레벨 구도", right:"하이/로우 앵글이나 과감하게 프레임을 잘라내는 구도", leftShort:"안정 구도", rightShort:"과감한 구도" },
+      { id:18, part:2, axis:"Y", weight:1, question:"한 착장의 상세페이지 구성 방식은 어느 쪽입니까?", left:"전면, 측면, 후면의 정보 전달 중심 카탈로그식 배치", right:"아티스틱한 사진 중심으로 감정과 여백을 남기는 배치", leftShort:"정보 전달", rightShort:"감정과 여백" },
+      { id:19, part:2, axis:"Y", weight:1, question:"소비자가 브랜드 비주얼을 처음 봤을 때 남기고 싶은 잔상은?", left:"완성도 높은 옷 자체의 디자인", right:"브랜드의 세계관과 분위기를 보여주는 이미지", leftShort:"옷 자체", rightShort:"세계관 이미지" },
+      { id:20, part:2, axis:"Y", weight:1, question:"새 컬렉션을 처음 공개하는 방식은 어느 쪽입니까?", left:"상품 디테일과 가격, 출시일 등 정보를 먼저 공개한다", right:"무드 이미지로 기대감을 먼저 만들고 정보는 나중에 공개한다", leftShort:"정보 선공개", rightShort:"무드 선공개" },
+      { id:21, part:3, axis:"S", weight:2, question:"비주얼 기획에서 스타일링의 진짜 역할은 무엇입니까?", left:"디자인의 매력을 살려주는 조연", right:"브랜드의 태도와 서사를 드러내는 주인공", leftShort:"조연", rightShort:"주인공" },
+      { id:22, part:3, axis:"S", weight:1, question:"룩북 촬영 예산을 배분할 때 내 우선순위는?", left:"상품과 모델에 집중, 스타일링은 최소화", right:"스타일링·소품·세트까지 촬영 전체의 밀도에 투자", leftShort:"상품 집중", rightShort:"촬영 밀도" },
+      { id:23, part:3, axis:"S", weight:1, question:"룩북 모델을 캐스팅할 때 더 끌리는 쪽은?", left:"옷을 방해하지 않는 깨끗하고 중성적인 인상", right:"강한 개성과 서사가 있는 얼굴", leftShort:"중성적 인상", rightShort:"강한 개성" },
+      { id:24, part:3, axis:"S", weight:1, question:"촬영 장소와 세트를 준비하는 내 태도는?", left:"옷이 돋보이도록 공간은 최대한 절제한다", right:"공간과 소품까지 디렉팅해서 세계관을 완성한다", leftShort:"공간 절제", rightShort:"세계관 완성" },
+      { id:25, part:3, axis:"S", weight:1, question:"헤어 & 메이크업 실장에게 요청하는 뉘앙스는?", left:"옷과 어우러지는 깔끔한 내추럴 스타일", right:"젖은 머리나 엣지있는 포인트로 개성을 살리는 스타일", leftShort:"내추럴 스타일", rightShort:"개성 스타일" },
+      { id:26, part:3, axis:"S", weight:1, question:"모델을 카메라 앞에 세우기 직전, 내 마지막 손길은 어느 쪽입니까?", left:"소품을 빼고 옷 본연의 핏과 실루엣만 정돈한다", right:"모자, 가방, 선글라스 등 소품을 겹겹이 매칭한다", leftShort:"실루엣 정돈", rightShort:"소품 레이어" },
+      { id:27, part:3, axis:"S", weight:1, question:"현장에서 모니터를 볼 때 시선이 먼저 가는 곳은?", left:"메인 아이템의 핏과 잔주름 없는지 점검", right:"머리부터 발끝까지 전체 레이어드의 밸런스 체크", leftShort:"단품 핏", rightShort:"전체 룩" },
+      { id:28, part:3, axis:"S", weight:1, question:"촬영 중 마음에 안 드는 컷이 나왔을 때 기준은?", left:"상품의 핏과 색감이 정확하게 보이면 통과", right:"무드와 아우라가 살아있지 않으면 다시 찍는다", leftShort:"정보 정확도", rightShort:"무드 완성도" },
+      { id:29, part:3, axis:"S", weight:1, question:"스타일링 레퍼런스를 수집하는 방식은?", left:"편집몰과 플랫폼의 시즌 스타일링 트렌드를 중심으로 참고한다", right:"개성 있는 인플루언서, 해외 컬렉션 등 나만의 시각으로 직접 매칭한다", leftShort:"트렌드 참고", rightShort:"독자적 매칭" },
+      { id:30, part:3, axis:"S", weight:2, question:"룩북 공개 후 디렉터로서 기분 좋은 반응은?", left:"\"내일 아침 이 스타일링 그대로 입고 싶어요\"", right:"\"이 조합 신선하다! 큰 영감을 받았어요\"", leftShort:"따라 입고 싶은 룩", rightShort:"신선한 조합" },
+    ];
+
+    const choiceValues = [-10, -5, 0, 5, 10];
+    const resultMap = {
+      "+++": "아티스트형", "+-+": "팬덤몰이형", "-+-": "아날로그 감성형",
+      "++-": "한끗 컨템형", "---": "조용한 미니멀형", "-++": "프렌치 낭만형",
+      "--+": "데일리 스타일링형", "+--": "트렌드세터형"
+    };
+
+    let currentIndex = 0;
+    let answers = {};
+    let brandName = "";
+    let finalScores = {};
+
+    const $ = id => document.getElementById(id);
+
+    function setScreen(id) {
+      ["introScreen","questionScreen","completeScreen"].forEach(s => {
+        const el = document.getElementById(s);
+        el.style.display = "none";
+        el.classList.remove("active");
+      });
+      const target = document.getElementById(id);
+      target.style.display = "";
+      target.classList.add("active");
+      window.scrollTo(0, 0);
+    }
+
+    function calculateScore(axis) {
+      const qs = questions.filter(q => q.axis === axis);
+      const weighted = qs.reduce((sum, q) => sum + (answers[q.id] ?? 0) * q.weight, 0);
+      const total = qs.reduce((sum, q) => sum + q.weight, 0);
+      return Math.round((weighted / total) * 10);
+    }
+
+    function getDirection(v) { return v >= 0 ? "+" : "-"; }
+
+    function renderQuestion() {
+      const q = questions[currentIndex];
+      $("qBrand").textContent = brandName;
+      $("qCount").textContent = `${String(currentIndex + 1).padStart(2,"0")} / 30`;
+      $("progressBar").style.width = `${((currentIndex + 1) / 30) * 100}%`;
+      $("qNumber").textContent = `Q${q.id} — PART ${q.part}`;
+      $("qText").textContent = q.question;
+      $("leftAnchor").textContent = q.left;
+      $("rightAnchor").textContent = q.right;
+      $("leftShort").textContent = q.leftShort;
+      $("rightShort").textContent = q.rightShort;
+      $("backBtn").disabled = currentIndex === 0;
+
+      const dotGroup = $("dotGroup");
+      dotGroup.innerHTML = "";
+      choiceValues.forEach(val => {
+        const btn = document.createElement("button");
+        btn.className = "dot-btn" + (answers[q.id] === val ? " selected" : "");
+        btn.type = "button";
+        btn.addEventListener("click", () => selectAnswer(q, val));
+        dotGroup.appendChild(btn);
+      });
+    }
+
+    function selectAnswer(q, val) {
+      answers[q.id] = val;
+      const next = currentIndex + 1;
+      if (next >= questions.length) {
+        showComplete();
+      } else {
+        currentIndex = next;
+        renderQuestion();
+      }
+    }
+
+    function showComplete() {
+      const x = calculateScore("X");
+      const y = calculateScore("Y");
+      const s = calculateScore("S");
+      const xDisplay = Math.round((x / 120) * 100);
+      const yDisplay = Math.round((y / 120) * 100);
+      const sDisplay = Math.round(((s + 120) / 240) * 100);
+      const key = getDirection(x) + getDirection(y) + getDirection(s);
+      const isCenter = x === 0 && y === 0 && s === 0;
+      const type = isCenter ? "한끗 컨템형" : (resultMap[key] ?? "한끗 컨템형");
+
+      finalScores = { x: xDisplay, y: yDisplay, s: sDisplay, xRaw: x, yRaw: y, sRaw: s, type };
+
+      $("completeBrand").textContent = brandName;
+      $("scoreX").textContent = (xDisplay >= 0 ? "+" : "") + xDisplay;
+      $("scoreY").textContent = (yDisplay >= 0 ? "+" : "") + yDisplay;
+      $("scoreS").textContent = sDisplay;
+      $("resultType").textContent = `→ ${type}`;
+      $("saveStatus").textContent = "";
+      setScreen("completeScreen");
+    }
+
+    async function saveToSheet() {
+      $("saveBtn").disabled = true;
+      $("saveStatus").textContent = "저장 중...";
+      $("saveStatus").className = "save-status";
+
+      const answerArr = questions.map(q => answers[q.id] ?? 0);
+      const payload = {
+        type: "brand_scoring",
+        brandName,
+        answers: answerArr,
+        x: finalScores.x,
+        y: finalScores.y,
+        s: finalScores.s,
+        resultType: finalScores.type,
+        createdAt: new Date().toISOString()
+      };
+
+      try {
+        await fetch(ENDPOINT, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        $("saveStatus").textContent = "✓ 구글 시트에 저장되었습니다.";
+        $("saveStatus").className = "save-status success";
+        $("saveBtn").textContent = "저장 완료";
+      } catch (e) {
+        $("saveStatus").textContent = "저장에 실패했습니다. 다시 시도해주세요.";
+        $("saveStatus").className = "save-status error";
+        $("saveBtn").disabled = false;
+      }
+    }
+
+    // 이벤트 바인딩
+    $("startBtn").addEventListener("click", () => {
+      const name = $("brandNameInput").value.trim();
+      if (!name) { $("brandNameInput").focus(); return; }
+      brandName = name;
+      currentIndex = 0;
+      answers = {};
+      renderQuestion();
+      setScreen("questionScreen");
+    });
+
+    $("brandNameInput").addEventListener("keydown", e => {
+      if (e.key === "Enter") $("startBtn").click();
+    });
+
+    $("backBtn").addEventListener("click", () => {
+      if (currentIndex > 0) { currentIndex--; renderQuestion(); }
+    });
+
+    $("saveBtn").addEventListener("click", saveToSheet);
+
+    $("newBrandBtn").addEventListener("click", () => {
+      $("brandNameInput").value = "";
+      answers = {};
+      currentIndex = 0;
+      setScreen("introScreen");
+    });
+  </script>
+</body>
+</html>
