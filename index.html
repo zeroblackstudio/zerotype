@@ -456,8 +456,8 @@
               </form>
             </div>
             <div id="completeBox" class="complete-box" tabindex="-1">
-              <h3>신청이 접수되었습니다.</h3>
-              <p>남겨주신 브랜드 정보를 검토한 뒤,<br>비주얼 진단이 의미 있는 브랜드에 한해 개별 연락드리겠습니다.</p>
+              <h3>미팅 신청이 접수되었습니다.</h3>
+              <p>브랜드 정보를 검토한 뒤 미팅 일정을 안내드리겠습니다.<br>그 사이, 제로블랙의 포트폴리오를 먼저 확인해보세요.</p>
             </div>
           </aside>
         </div>
@@ -1137,6 +1137,9 @@
       const completeBox = $("#completeBox");
       completeBox.classList.add("is-active");
       completeBox.focus();
+      window.setTimeout(() => {
+        window.location.href = "https://zeroblackstudio.kr/portfolio";
+      }, 2500);
     }
 
     function validateLeadForm(form) {
