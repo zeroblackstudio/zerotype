@@ -227,8 +227,13 @@
         el.classList.remove("active");
       });
       const target = document.getElementById(id);
-      target.style.display = "";
       target.classList.add("active");
+      // complete screen needs flex, others need block
+      if (id === "completeScreen") {
+        target.style.display = "flex";
+      } else {
+        target.style.display = "block";
+      }
       window.scrollTo(0, 0);
     }
 
