@@ -220,6 +220,12 @@
 
     const $ = id => document.getElementById(id);
 
+    const screenDisplay = {
+      introScreen: "flex",
+      questionScreen: "block",
+      completeScreen: "flex"
+    };
+
     function setScreen(id) {
       ["introScreen","questionScreen","completeScreen"].forEach(s => {
         const el = document.getElementById(s);
@@ -228,12 +234,7 @@
       });
       const target = document.getElementById(id);
       target.classList.add("active");
-      // complete screen needs flex, others need block
-      if (id === "completeScreen") {
-        target.style.display = "flex";
-      } else {
-        target.style.display = "block";
-      }
+      target.style.display = screenDisplay[id] || "block";
       window.scrollTo(0, 0);
     }
 
